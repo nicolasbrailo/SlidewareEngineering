@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>Slides: A template</title>
+    <link rel="shortcut icon" href="img/favicon.png" />
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/pdfprint.css" rel="stylesheet" />
+    <link href="extdeps/deps.css" rel="stylesheet">
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Firefox</b> browser. <small>Chrome probably works too</small></p>
+</div>
+
+<div id="impress"
+    data-transition-duration="0"
+    data-width="1920"
+    data-height="1080"
+    data-max-scale="3"
+    data-min-scale="0">
+
+
+<!-- Slide1 defines canvas position start with data-(x,y). Slide2 needs to
+  define data-rel-(x,y) to tell impress.js the default relative movement.
+  Successive slides don't need to define any (x,y), unless we need to
+  override the position of a slide -->
+<div class="step slide" id="title" data-x="0" data-y="1920">
+  <h1>Title</h1>
+  <h2>Sub title</h2>
+  <h2>Date probably</h2>
+
+  <hr/>
+
+  <ul>
+    <li>Summary</li>
+    <li>Summary</li>
+    <li>Summary</li>
+  </ul>
+
+  <div class="bottom-message">
+    <img width="25%" src="img/qr.png"/>
+    <p><a href="https://nicolasbrailo.github.io/">https://nicolasbrailo.github.io/</a></p>
+    <p class="fineprint">(PSA: Careful when scanning untrusted QR codes!)</p>
+  </div>
+</div>
+
+<div class="step slide" id="links" data-rel-y="3840">
+  <h1>Links</h1>
+  <ul>
+    <li><a href="http://example.com" target="blank">Example</a></li>
+    <li><a href="http://example.com" target="blank">Example</a></li>
+    <li><a href="http://example.com" target="blank">Example</a></li>
+    <li><a href="http://example.com" target="blank">Example</a></li>
+  </ul>
+
+  NB: The first two slides need the data-rel-y param, the rest don't
+</div>
+
+
+<div class="step slide" id="slide">
+  <h1>Title</h1>
+
+  Foo:
+  <ul>
+    <li>Bar</li>
+    <li>Baz</li>
+  </ul>
+  <img width="55%" src="img/sample_img.png" class="bottom-message"/>
+</div>
+
+
+<div class="step slide" id="slide_with_code">
+  <h2>Code sample</h2>
+  <pre><code>
+int main() {
+  printf("HOLA MUNDO\n");
+  return 0;
+}
+  </code></pre>
+</div>
+
+</div>
+
+<script src="extdeps/deps.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

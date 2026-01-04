@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>WTA: A collection of cool audio demos</title>
+
+    <!-- From https://upload.wikimedia.org/wikipedia/commons/4/47/Sound-icon.svg -->
+    <link rel="shortcut icon" href="favicon.png" />
+
+    <link href="common.css" rel="stylesheet" />
+    <link href="pdfprint.css" rel="stylesheet" />
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="demos_disabled_msg">
+  <p>Demos are disabled</p>
+  <button id="demos_enable">Enable demos (requires audio access)</button>
+  <button id="demos_keep_disabled">Keep demos disabled (no audio access)</button>
+</div>
+
+
+<div id="impress"
+    data-transition-duration="0"
+    data-width="1920"
+    data-height="1080"
+    data-max-scale="3"
+    data-min-scale="0">
+
+
+    <!-- Slide1 defines canvas position start with data-(x,y). Slide2 needs to
+      define data-rel-(x,y) to tell impress.js the default relative movement.
+      Successive slides don't need to define any (x,y), unless we need to
+      override the position of a slide -->
+    <div class="step slide" id="wta" data-x="0" data-y="1920">
+      <h1>WAT THE AUDIO: Demo set</h1>
+      <hr/>
+      <ul>
+        <li><b>NO HEADPHONES!</b> Some audio demos may be painfuly uncomfortable with headphones</li>
+        <li>Careful with the volume: some audio demos may be annoying if the volume is too loud</li>
+        <li>Mic access: demos here will process your mic, but all processing is done locally (<a href="https://github.com/nicolasbrailo/wta">Check the source!</a>)</li>
+        <li>Move through the demos swiping left and right, or with the left/right arrows</li>
+      </ul>
+      <div class="bottom-message">
+        <p><a href="https://nicolasbrailo.github.io/wta/">This demo should be available @ https://nicolasbrailo.github.io/wta/</a></p>
+        <p>(PSA: Careful when scanning untrusted QR codes!)</p>
+        <img width="25%" src="qr.png"/>
+      </div>
+    </div>
+
+    <div class="step slide" id="is_this_on"  data-rel-y="3840">
+      <h1>WAT THE AUDIO: Mic check</h1>
+      <p>If the demos work, you should be able to hear yourself now</p>
+      <p>If demos don't work, sorry :(</p>
+    </div>
+
+
+    <div class="step slide" id="shifting_peaks">
+        <h1>If sound was a colour...</h1>
+        <p>
+          <canvas id="shifting_peaks_canvas" style="display: block; width: 90%; height: 80px"></canvas>
+          <input type="range" id="shifting_peaks_slider" min="0", max="100" value="1" style="width: 90%"/>
+          <label id="shifting_peaks_slider_f_lbl" for="shifting_peaks_slider" style="display: inline-block; width: 65%">F:</label><br/>
+          <div id="shifting_peaks_graph_container"></div>
+        </p>
+    </div>
+
+
+    <div class="step slide" id="fft_3d">
+        <h1>Your voice has a shape!</h1>
+        <p>
+          <canvas id="fft_3d_canvas" style="display: block; width: 90%; height: 90%; border: 1px solid grey;" content="width=device-width,initial-scale=1.0"></canvas>
+        </p>
+    </div>
+
+
+    <div class="step slide" id="waveforms" data-rel-y="3840">
+        <h1>What if waves looked funny?</h1>
+        <select id="waveforms_name">
+          <option value="sine">Sine</option>
+          <option value="square">Square</option>
+          <option value="triangle">Triangle</option>
+        </select>
+        <p>
+          <canvas id="waveforms_canvas" style="display: block; width: 90%; height: 80px"></canvas>
+          <input type="range" id="waveforms_slider" min="0", max="100" value="1" style="width: 90%"/>
+          <label id="waveforms_slider_f_lbl" for="waveforms_slider" style="display: inline-block; width: 65%">F:</label><br/>
+          <div id="waveforms_graph_container"></div>
+        </p>
+
+        The "shape" of the wave changes how it sounds, and the harmonics it produces. Some sound horrible!
+    </div>
+
+
+    <div class="step slide" id="effects">
+      <div>
+        <p>Music sample</p>
+        <audio controls loop
+               style="width: 40%; height: 80px"
+               id="effects_music1"
+               src="media_small/music1.mp3"
+               crossorigin="anonymous"
+               type="audio/mpeg"></audio>
+      </div>
+      <hr/>
+      <div>
+        <p>Another music sample</p>
+        <audio controls loop
+               style="width: 40%; height: 80px"
+               id="effects_music2"
+               src="media_small/music2.mp3"
+               crossorigin="anonymous"
+               type="audio/mpeg"></audio>
+      </div>
+      <hr/>
+      <div>
+        <p>Voice sample</p>
+        <audio controls loop
+               style="width: 40%; height: 80px"
+               id="effects_voice1"
+               src="media_small/voice.mp3"
+               crossorigin="anonymous"
+               type="audio/mpeg"></audio>
+      </div>
+      <hr/>
+      <div>
+        <p>Mic</p>
+        <button id="effects_mic_toggle">Disable mic</button>
+      </div>
+      <hr/>
+
+      <h1>Effect</h1>
+      <select id="effects_name">
+        <option value="none" selected="selected">None</option>
+        <option value="vhs">VHS</option>
+        <option value="pstn">Old phone</option>
+        <option value="underwater">Underwater</option>
+      </select>
+
+      <div id="effects_graph_container"></div>
+    </div>
+
+    <div class="step slide" id="echo_echo_echo_echo" data-x="0" data-y="0">
+        <h1>Stop copying me!</h1>
+        <p>
+        It's very hard for people to talk while they hear themselves. Try it out: try to have a conversation while echo is active.
+        </p>
+        <p>
+          <label id="echo_echo_echo_echo_attenuation_lbl" for="echo_echo_echo_echo_attenuation" style="display: inline-block; width: 20%"></label><br/>
+          <input type="range" id="echo_echo_echo_echo_attenuation" min="0", max="40" step="1" style="width: 90%"/>
+        </p>
+        <p>
+          <label id="echo_echo_echo_echo_delay_lbl" for="echo_echo_echo_echo_delay" style="display: inline-block; width: 20%">Echo delay:</label><br/>
+          <input type="range" id="echo_echo_echo_echo_delay" min="0", max="1000" step="50" style="width: 90%"/>
+        </p>
+        <div id="echo_echo_echo_echo_mic_gain_tuning" style="display:none">
+        <hr/>
+        <p>
+          <label id="echo_echo_echo_echo_mic_gain_lbl" for="echo_echo_echo_echo_mic_gain" style="display: inline-block; width: 20%"></label><br/>
+          <input type="range" id="echo_echo_echo_echo_mic_gain" min="0", max="40" step="1" style="width: 90%"/>
+        </p>
+        </div>
+    </div>
+
+
+    <!--
+    <div class="step slide" id="experiment" data-x="0" data-y="0">
+      <h1>experiment</h1>
+      <div>
+        <p>Voice sample</p>
+        <audio controls loop
+               style="width: 40%; height: 80px"
+               id="experiment_voice"
+               src="media_small/voice.mp3"
+               crossorigin="anonymous"
+               type="audio/mpeg"></audio>
+      </div>
+    </div>
+    -->
+
+<!--
+    <div class="step slide" id="hearing_colors" data-rel-y="3840">
+        <h1>Humans are weird</h1>
+        <p>
+          <label for="hearing_colors_slider" style="display: inline-block; width: 15%">F:</label><br/>
+          <input type="range" id="hearing_colors_slider" min="0", max="100" value="1" style="width: 90%"/>
+          <canvas id="hearing_colors_canvas" style="display: block; width: 90%; height: 80px"></canvas>
+        </p>
+    </div>
+
+
+    <div class="step slide" id="vision_at_5fps">
+        <h1>Low FPS</h1>
+
+        <video controls loop width="95%" id="awesome_in_space">
+          <source src="media/awesome_in_space.mp4" type="video/webm">
+        </video>
+    </div>
+
+
+    <div class="step slide" id="every_sample_counts">
+        <h1>Unlike video, loosing things is VERY bad</h1>
+
+        <video controls muted loop width="80%" id="every_sample_counts_video">
+          <source src="media/ais_24.mov" type="video/webm">
+        </video>
+        <audio controls loop style="display: none"
+               style="width: 40%; height: 80px"
+               id="every_sample_counts_audio"
+               src="media/awesome_in_space.mp3"
+               crossorigin="anonymous"
+               type="audio/mpeg"></audio>
+
+        <ul>
+          <li><button id="every_sample_counts_24">24/24</button></li>
+          <li><button id="every_sample_counts_15">15/24</button></li>
+          <li><button id="every_sample_counts_10">10/24</button></li>
+          <li><button id="every_sample_counts_5">5/24</button></li>
+        </ul>
+        < !-- TODO: Add note on flakiness of Firefox here -- >
+    </div>
+
+
+    <div class="step slide" id="lossily_hear_yourself">
+        <h1>Try it out</h1>
+        <button id="lossily_hear_yourself_rec">Record</button>
+        <button id="lossily_hear_yourself_play">Play</button>
+        <input type="range" id="lossily_hear_yourself_slider" min="0",
+                                  max="100" value="1" style="width: 90%"/>
+    </div>
+-->
+
+</div>
+
+<script
+  src="https://code.jquery.com/jquery-3.6.2.min.js"
+  integrity="sha384-hG927x624PENgmWpFXvtXur3MEE0/cNnW0uTi+AcHTSFncBqimnzYyBzy8aFDA1s"
+  crossorigin="anonymous">
+</script>
+
+<script src="impress.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

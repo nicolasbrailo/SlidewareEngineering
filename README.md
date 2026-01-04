@@ -1,4 +1,3 @@
-powerpoint_monkey
-=================
+SlidewareEngineering
 
-A repo for the source of my public presentations (Latex, mostly)
+If you thought my code was bad, wait until you see my code in random presentations.
