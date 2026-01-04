@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="674" height="497">
+  <defs>
+    <marker orient="auto" id="Arrow2Send" style="overflow:visible">
+      <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-0.3,0,0,-0.3,0.69,0)" style="fill:#808080"/>
+    </marker>
+    <marker orient="auto" id="Arrow2Mstart" style="overflow:visible">
+      <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="scale(0.6,0.6)" style="fill:#808080"/>
+    </marker>
+    <marker orient="auto" id="Arrow2Mend" style="overflow:visible">
+      <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="scale(-0.6,-0.6)" style="fill:#808080"/>
+    </marker>
+    <linearGradient id="linearGradient3793">
+      <stop style="stop-color:#ff9966" offset="0"/>
+      <stop style="stop-color:#ffff66" offset="0.5"/>
+      <stop style="stop-color:#66ff6c" offset="1"/>
+    </linearGradient>
+    <linearGradient x1="78" x2="380" id="linearGradient3803" xlink:href="#linearGradient3793" gradientUnits="userSpaceOnUse"/>
+    <linearGradient x1="74" y1="173" x2="601" y2="173" id="linearGradient3825" xlink:href="#linearGradient3793" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <path d="m 59,131 567,0" id="path1" style="stroke:#808080;stroke-linecap:round"/>
+  <use transform="translate(0,75)" xlink:href="#path1"/>
+  <use transform="translate(0,158)" xlink:href="#path1"/>
+  <use transform="translate(0,253)" xlink:href="#path1"/>
+  <path d="m 59,47 556,0" style="stroke:#808080;stroke-width:5;stroke-linecap:round;marker-end:url(#Arrow2Send)"/>
+  <path d="m 59,47 0,370" style="stroke:#808080;stroke-width:5;stroke-linecap:round;marker-end:url(#Arrow2Send)"/>
+  <path d="m 652,66 0,313" style="stroke:#808080;stroke-width:2.5;marker-start:url(#Arrow2Mstart);marker-end:url(#Arrow2Mend)"/>
+  <path d="m 119,425 464,0" style="stroke:#808080;stroke-width:2.5;marker-start:url(#Arrow2Mstart);marker-end:url(#Arrow2Mend)"/>
+  <ellipse cx="484.25" cy="162" rx="141.75" ry="44" style="fill:#66ff6c"/>
+  <path d="m 633,99.63936 a 274,38 0 0 1 -548,0 274,38 0 1 1 548,0 z" style="fill:#808080"/>
+  <ellipse cx="352" cy="92" rx="274" ry="38" style="fill:url(#linearGradient3803)"/>
+  <ellipse cx="115.5" cy="107.5" rx="42" ry="19" style="fill:#ff9966"/>
+  <ellipse cx="210" cy="170" rx="132" ry="28" style="fill:url(#linearGradient3825)"/>
+  <ellipse cx="295" cy="206" rx="85" ry="19" style="fill:#66ff6c"/>
+  <ellipse cx="200.5" cy="232" rx="84.5" ry="19" style="fill:#ffff66"/>
+  <ellipse cx="285.5" cy="291" rx="131.5" ry="28" style="fill:#66ff6c"/>
+  <ellipse cx="417.5" cy="389" rx="207.5" ry="28" style="fill:#66ff6c"/>
+  <rect width="461" height="38" x="122" y="459" style="fill:#ffffff;stroke:#808080"/>
+  <circle cx="142.5" cy="478" r="11.5" style="fill:#ff9966;stroke:#808080"/>
+  <circle cx="304.5" cy="478" r="11.5" style="fill:#ffff66;stroke:#808080"/>
+  <circle cx="443" cy="478" r="11.5" style="fill:#66ff6c;stroke:#808080"/>
+  <text style="font-size:19px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="339" y="16">Bitrate (kbps/channel)</tspan></text>
+  <text transform="matrix(0,1,-1,0,0,0)" style="font-size:19px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="205.1291" y="-4.7897768">Delay (ms)</tspan></text>
+  <text style="font-size:19px;text-align:end;text-anchor:end;font-family:DejaVu Sans"><tspan x="49.392632" y="53.892239">0</tspan></text>
+  <text style="font-size:19px;text-align:end;text-anchor:end;font-family:DejaVu Sans"><tspan x="49.392632" y="137.91626">20</tspan></text>
+  <use transform="translate(-300.1782,174.41626)" xlink:href="#text1"/>
+  <text style="font-size:19px;text-align:end;text-anchor:end;font-family:DejaVu Sans"><tspan x="49.392632" y="295.91626">80</tspan></text>
+  <text style="font-size:19px;text-align:end;text-anchor:end;font-family:DejaVu Sans"><tspan x="49.392632" y="390.91626">200</tspan></text>
+  <text id="text1" style="font-size:19px;font-family:DejaVu Sans"><tspan x="325.37552" y="38.5">40</tspan></text>
+  <text style="font-size:19px;font-family:DejaVu Sans"><tspan x="574.30951" y="38.5">80</tspan></text>
+  <text style="font-size:19px;font-family:DejaVu Sans"><tspan x="167.28203" y="485.08325">narrowband</tspan></text>
+  <text style="font-size:19px;font-family:DejaVu Sans"><tspan x="329.12265" y="485.08325">wideband</tspan></text>
+  <text style="font-size:19px;font-family:DejaVu Sans"><tspan x="464.8848" y="485.08325">&gt; wideband</tspan></text>
+  <text style="font-size:19px;font-family:DejaVu Sans"><tspan x="138.71498" y="444" style="font-size:15px;font-family:DejaVu Sans">Phone quality</tspan></text>
+  <text style="font-size:15px;font-family:DejaVu Sans"><tspan x="458.48438" y="444">High fidelity</tspan></text>
+  <text transform="matrix(0,1,-1,0,0,0)" style="font-size:15px;font-family:DejaVu Sans"><tspan x="95.674614" y="-662">Real-time (live)</tspan></text>
+  <text transform="matrix(0,1,-1,0,0,0)" style="font-size:15px;font-family:DejaVu Sans"><tspan x="276.49753" y="-662">Archival</tspan></text>
+  <text id="text2" style="font-size:23px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="59.024021" y="254.70996">≈</tspan></text>
+  <use transform="translate(0,89)" xlink:href="#text2"/>
+  <text style="font-size:22px;font-weight:bold;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="351.97852" y="97.875977">Opus</tspan></text>
+  <text style="font-size:20px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="115.64648" y="114.78027">G.729</tspan></text>
+  <text style="font-size:20px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="210.20508" y="175.50781">Speex (NB, WB)</tspan></text>
+  <text style="font-size:22px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="484.55859" y="170.0083">AAC-LD</tspan></text>
+  <text style="font-size:22px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="294.98926" y="214.0083">G.722.1C</tspan></text>
+  <text style="font-size:22px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="200.90283" y="240.0083">G.729.1</tspan></text>
+  <text style="font-size:22px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="286.62097" y="299.01904">AMR-WB+</tspan></text>
+  <text style="font-size:22px;text-align:center;text-anchor:middle;font-family:DejaVu Sans"><tspan x="418.30029" y="396.0791">Vorbis, AAC, MP3</tspan></text>
+</svg>

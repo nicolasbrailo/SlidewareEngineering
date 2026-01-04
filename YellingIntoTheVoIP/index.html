@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>Yelling into the VoIP</title>
+    <!-- https://www.flaticon.com/free-icon/line_15654932 -->
+    <link rel="shortcut icon" href="img/favicon.png" />
+    <link href="css/classless.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/pdfprint.css" rel="stylesheet" />
+    <link href="extdeps/deps.css" rel="stylesheet">
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Firefox</b> browser. <small>Chrome probably works too</small></p>
+</div>
+
+<div id="impress-toolbar"></div>
+
+<div id="impress"
+    data-transition-duration="0"
+    data-width="2020"
+    data-height="1200"
+    data-max-scale="3"
+    data-min-scale="0">
+
+
+<!-- Slide1 defines canvas position start with data-(x,y). Slide2 needs to
+  define data-rel-(x,y) to tell impress.js the default relative movement.
+  Successive slides don't need to define any (x,y), unless we need to
+  override the position of a slide -->
+<div class="step slide" id="yellingIntoTheVoIP" data-x="0" data-y="1920">
+  <h1><img src="img/favicon.png" />Yelling into the VoIP</h1>
+  <h2>Internet! Because phones were too simple</h2>
+
+  <hr/>
+
+  <ul class="main-content-verticalcenter">
+    <li>How humans hear</li>
+    <li>How computers hear</li>
+    <li>How to move voice between computers</li>
+    <li>How to play audio</li>
+  </ul>
+
+  <div class="bottom-badge">
+    <img width="25%" src="img/qr.png"/>
+    <p><a href="https://nicolasbrailo.github.io/">Goto src</a></p>
+    <p class="fineprint">(PSA: Careful when scanning untrusted QR codes!)</p>
+  </div>
+</div>
+
+<div class="step slide" id="links" data-rel-y="3840">
+  <h1>Links</h1>
+  <ul>
+    <li><a href="https://xiph.org/video/vid1.shtml">A Digital Media Primer for Geeks</a></li>
+    <li><a href="https://xiph.org/video/vid2.shtml">A Digital Media Primer for Geeks (Part II)</a></li>
+    <li><a href="https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft">What is an FFT</a></li>
+    <li><a href="https://www.audiorecording.me/understanding-what-does-rms-stands-for-in-audio-definition-details.html">What is RMS</a></li>
+    <li><a href="http://k.ylo.ph/2016/04/04/loudnorm.html">loudnorm</a></li>
+    <li><a href="https://gstreamer.freedesktop.org/data/events/gstreamer-conference/2012/opus.pdf">OPUS Codec</a></li>
+    <li><a href="https://support.zoom.us/hc/en-us/articles/360028854392-Acoustics-Audio-Concepts">Zoom</a></li>
+    <li><a href="https://tech.ebu.ch/docs/tech/tech3342v2_0.pdf">Definition of LRA/loudness dynamic range</a></li>
+    <li><a href="https://ccrma.stanford.edu/~jos/resample/resample.pdf">Digital audio resampling</a></li>
+    <li><a href="https://wiki.audio/En/0033" target="blank">Reverb / RT60</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/skypeforbusiness/certification/test-spec">Skype / Lync audio standards / certification guide</a></li>
+  </ul>
+  <!--ul>
+    AGC/DRC/Limiter
+    Beamforming
+    Codec
+    Echo, Echo Canceller
+    Mic/Capture
+    Quantization, Sampling theorem
+    Reverb/RT60
+    Speaker/Render
+    SPL/dB/dBFS/LUFS
+    Transport
+    Jitter buffer
+    Packet loss concealment
+    PCM
+    FEC/DTX
+  </ul -->
+</div>
+
+<div class="step slide" id="goal">
+  <h1>Goal: understand this E2E</h1>
+  <img src="img/01-basics.png"/>
+</div>
+<div class="step slide" id="realistic-goal">
+  <h1>Goal: <s>understand this E2E</s> have a reference for TLAs</h1>
+  <img src="img/01-basics.png"/>
+</div>
+<div class="step slide" id="nearend-farend">
+  <h1>Near end / Far end | RX/TX | Render / Capture</h1>
+  <img src="img/02-nearend-farend.png"/>
+</div>
+<div class="step slide" id="telephony-detail">
+  <h1>Inside a telephony app</h1>
+  <img src="img/03-telephony-detail.png" />
+</div>
+<div class="step slide" id="telephony-stages">
+  <h1>Stages</h1>
+  <img src="img/04-stages.png" />
+</div>
+
+<div class="step slide" id="acoustics">
+  <h1>Acoustics / Psychoacoustics</h1>
+  <ul>
+    <li>Acoustics: how sound behaves</li>
+    <li>Psychoacoustics: how humans think sound behaves</li>
+    <li>Outside of computers: sound = variation in air pressure. A MECHANICAL process.</li>
+    <li>When ploted (Pascals/Time), looks sinusoidal.</li>
+    <li>Graphs here may or may not resemble actual audio.</li>
+  </ul>
+  <img src="img/A00-audio.png" width="30%"/><!-- https://upload.wikimedia.org/wikipedia/commons/6/6e/CPT-Sound-SampleRate-3way-Comparison.png -->
+  <img src="img/A00-audio-samples.png" width="30%"/><!--  https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Audacity-Screenshot.jpg/960px-Audacity-Screenshot.jpg -->
+  <img src="img/A00-audio-sine.png" width="30%"/>
+</div>
+<div class="step slide" id="propagation">
+  <h1>Acoustics: Propagation</h1>
+  <img src="img/A01-propagation.png" />
+</div>
+<div class="step slide" id="reverb">
+  <h1>Acoustics: Reverb</h1>
+  <h3>Reverb gives humans sense of space</h3>
+  <img src="img/A01-reverb.png"  style="height: 80%"/>
+</div>
+<div class="step slide" id="rt60">
+  <h1>Acoustics: Reverb</h1>
+  <div class="img-layout img-layout--left-stack">
+    <img src="img/A02-reverb-decay.png"/>
+    <div class="right-stack">
+      <img src="img/A02-RT60.png"/>
+      <img src="img/A02-TypicalRT60.png"/>
+    </div>
+  </div>
+</div>
+<div class="step slide" id="echo">
+  <h1>Echo</h1>
+  Reverb = aural event can't be sepparated. Echo = distinct aural events.
+  <img src="img/A03-echo.png" />
+</div>
+<div class="step slide" id="noise">
+  <h1>Noise</h1>
+  <img src="img/A03-Noise.png"/>
+</div>
+<div class="step slide" id="stereo">
+  <h1>Stereo</h1>
+  Human use cues from reverb, stereo effects, absorption, etc to spatialize sounds and to create "audio focus".
+  <img src="img/A04-stereo.png"/>
+</div>
+
+<div class="step slide" id="telephony-stages-capture">
+  <h1>Moving to capture / mic</h1>
+  <img src="img/04-stages.png" />
+</div>
+<div class="step slide" id="mic">
+  <h1>Sound capture</h1>
+  <img src="img/B01-mic.png"/>
+  <!-- Things we're not talking about: different applications of mic types -->
+</div>
+<div class="step slide" id="adc">
+  <h1>Analogue to digital</h1>
+  <img src="img/B02-adc.png"/>
+  <!-- Things we're not talking about: how an ADC works, Nyquist, quantization -->
+</div>
+<div class="step slide" id="bf">
+  <h1>Beamforming</h1>
+  <img src="img/B03-bf.png"/>
+</div>
+<div class="step slide" id="agc">
+  <h1>Volume control: AGC/DRC</h1>
+  <img src="img/B04-agc.png"/>
+</div>
+<div class="step slide" id="dbfs">
+  <h1>Volume control sidequest: dB, dBFS, SPL, dBOV, LUFS</h1>
+  <img src="img/B05-dbfs.png"/>
+  <a href="https://greatscottgadgets.com/sdr/3/">Better explanation here</a>
+</div>
+<div class="step slide" id="soc">
+  <h1>From DSP to user app</h1>
+  <img src="img/B05-dsp.png"/>
+  Other DSP types may include noise suppression, wind noise reduction, compensation for different hearing impairments, etc
+</div>
+
+<div class="step slide" id="move-to-render">
+  <h1>We're here: capture</h1>
+  <h1>Let's discuss: render</h1>
+  <img src="img/C01-move-to-render.png"/>
+</div>
+<div class="step slide" id="render-to-dsp">
+  <h1>Render: out of userspace</h1>
+  <img src="img/C02-render-out-of-userspace.png"/>
+</div>
+<div class="step slide" id="render-to-the-world">
+  <h1>Render: out of DSP, into the world</h1>
+  <img src="img/C03-render-out-of-dsp.png"/>
+</div>
+<div class="step slide" id="nyquist">
+  <h1>Render sidequest: hearing range and Nyquist theorem</h1>
+  <a href="https://upload.wikimedia.org/wikipedia/commons/5/5c/H%C3%B6rfl%C3%A4che.svg">
+    <img src="img/C04-hearingrange.png" height="60%"/></a>
+  <a href="https://sites.music.columbia.edu/cmc/MusicAndComputers/chapter2/02_03.php">
+    <img src="img/C04-aliasing.jpg"/></a>
+  <ul>
+    <li>Human hearing: 20 to 20KHz</li>
+    <li>Human speech: 400 to 4KHz</li>
+    <li>Sample rate 48KHz = Nyquist frequency 24KHz = Human hearing range</li>
+    <li>Sample rate 8KHz = Less bandwidth, but not human hearing range</li>
+  </ul>
+</div>
+
+<div class="step slide" id="moving-to-transport">
+  <h1>Transport</h1>
+  <img src="img/D00-transport.png"/>
+</div>
+
+<div class="step slide" id="sound-to-packets">
+  <h1>Audio -> Network packets</h1>
+  <img src="img/D01-transport.png"/>
+</div>
+<div class="step slide" id="filtering">
+  <h1>Filtering</h1>
+  <div class="img-layout img-layout--stacked-center-list">
+    <div class="img-stack">
+      <img src="img/D02-filtering.png"/>
+      <a href="https://www.hearingprotech.com/images/stories/noise/scale-sound-frequencies.jpg"><img src="img/D02-freqs-range.jpg"/></a>
+    </div>
+  </div>
+</div>
+<div class="step slide" id="packets">
+  <h1>Frames -> Packets</h1>
+  <div class="img-layout img-layout--stacked-center-list">
+    <div class="img-stack">
+      <img src="img/D03-packets.png" height="60%"/>
+      <a href="https://en.wikipedia.org/wiki/Opus_(audio_format)"><img src="img/D03-bitrate.svg" height="30%"/></a>
+    </div>
+    <ul>
+      <li>Packets may overlap frames</li>
+      <li>[Lossy] compression</li>
+      <li>Compression depends on available bandwidth</li>
+      <li>Packets may be elided entirely depending on VAD (DTX)</li>
+    </ul>
+  </div>
+</div>
+<div class="step slide" id="jb">
+  <h1>Jitter buffering</h1>
+  <img src="img/D04-jb.png"/>
+</div>
+<div class="step slide" id="packetloss">
+  <h1>Dealing with packet loss</h1>
+  <img src="img/D05-plc.png"/>
+</div>
+
+
+<div class="step slide" id="links-again">
+  <h1>Much better sources than this presentation</h1>
+  <ul>
+    <li><a href="https://xiph.org/video/vid1.shtml">A Digital Media Primer for Geeks</a></li>
+    <li><a href="https://xiph.org/video/vid2.shtml">A Digital Media Primer for Geeks (Part II)</a></li>
+    <li><a href="https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft">What is an FFT</a></li>
+    <li><a href="https://www.audiorecording.me/understanding-what-does-rms-stands-for-in-audio-definition-details.html">What is RMS</a></li>
+    <li><a href="http://k.ylo.ph/2016/04/04/loudnorm.html">loudnorm</a></li>
+    <li><a href="https://gstreamer.freedesktop.org/data/events/gstreamer-conference/2012/opus.pdf">OPUS Codec</a></li>
+    <li><a href="https://support.zoom.us/hc/en-us/articles/360028854392-Acoustics-Audio-Concepts">Zoom</a></li>
+    <li><a href="https://tech.ebu.ch/docs/tech/tech3342v2_0.pdf">Definition of LRA/loudness dynamic range</a></li>
+    <li><a href="https://ccrma.stanford.edu/~jos/resample/resample.pdf">Digital audio resampling</a></li>
+    <li><a href="https://wiki.audio/En/0033" target="blank">Reverb / RT60</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/skypeforbusiness/certification/test-spec">Skype / Lync audio standards / certification guide</a></li>
+  </ul>
+</div>
+
+<div class="step slide" id="e2e">
+  <h1>E2E pipeline</h1>
+  <img src="img/E00-e2e.png"/>
+</div>
+<div class="step slide" id="aec-echo">
+  <h1>Bonus: Echo</h1>
+  <img src="img/E01-echo.png"/>
+</div>
+<div class="step slide" id="aec-echo2">
+  <h1>Bonus: Echo</h1>
+  <img src="img/E01-echo2.png"/>
+</div>
+<div class="step slide" id="aec-transfer">
+  <h1>Bonus: Transfer function</h1>
+  <img src="img/E01-echo3.png"/>
+  The transfer function includes: time of flight between speaker and mic, reverb, different echo paths...
+</div>
+<div class="step slide" id="aec-multipath">
+  <h1>Bonus: AEC models multiple paths</h1>
+  <img src="img/E01-echo4.png"/>
+</div>
+<div class="step slide" id="aec-convergence">
+  <h1>Bonus: AEC reconverges when transfer changes</h1>
+  <img src="img/E01-echo5b.png" width="48%"/>
+  <img src="img/E01-echo5.png" width="48%"/>
+  When the path changes, the AEC needs to recalculate the transfer function. This includes accounting for 3p DSP.
+</div>
+
+
+</div>
+<script src="extdeps/deps.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
