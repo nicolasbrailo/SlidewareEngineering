@@ -214,6 +214,9 @@ a:focus {
     letter-spacing: -1px;
 }
 
+.slide h1 img {
+  max-height: 1.2em;
+}
 .slide h1 {
   font-size: 1.4em;
   line-height: 1.4em;
@@ -237,7 +240,11 @@ a:focus {
     white-space: nowrap;
 }
 
-.bottom-message {
+.main-content-verticalcenter {
+  transform: translateY(100%);
+}
+
+.bottom-badge {
   position: absolute;
   /*border: 1px solid grey;*/
   margin-bottom: 10px;
@@ -277,4 +284,198 @@ ul.listminus {
   bottom: 10px;
   right: 10px;
   text-align: right;
+}
+
+h1, h2, h3, h4, h5 { margin: 0; padding: 0; }
+img, svg {
+  max-width: 95%;
+  vertical-align: text-top;
+  object-fit: cover;
+}
+.slide > img {
+  display: block;
+  margin: 1em auto;
+  max-height: 95vh;
+}
+/* When an image follows another image, show it inline */
+.slide > img + img {
+  display: inline-block;
+  margin: 1em 0;
+}
+/* When an image is followed by another image, show it inline */
+.slide > img:has(+ img) {
+  display: inline-block;
+  margin: 1em 0;
+}
+
+
+/* A layout that shows one big image to the left, and two smaller images stacked vertically to the right. Use like
+  <div class="img-layout img-layout--left-stack">
+    <img/>
+    <div class="right-stack">
+      <img>
+      <img>
+    </div>
+  </div>
+ **/
+.img-layout--left-stack {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+.img-layout--left-stack .img-stack {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+}
+.img-layout--left-stack img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  height: fit-content;
+  width: fit-content;
+}
+/********************************************/
+/**
+ * A layout with two images stacked vertically to the left, and a list on the right. Use:
+<div class="step slide">
+  <h1>Title</h1>
+  <div class="img-layout img-layout--stacked-center-list">
+    <div class="img-stack">
+      <img height="60%"/>
+      <a><img height="30%"/></a>
+    </div>
+    <ul>
+      <li>...</li>
+      <li>...</li>
+      <li>...</li>
+      <li>...</li>
+    </ul>
+  </div>
+</div>
+ */
+.img-layout--stacked-center-list {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* left = images, right = list */
+  gap: 1.5rem;
+  align-items: start; /* top-align items */
+}
+
+/* Stack the images vertically inside the left column */
+.img-layout--stacked-center-list .img-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+/* Primary image (first) bigger */
+.img-layout--stacked-center-list .img-stack > img:first-child {
+  width: 100%;
+  max-height: 60%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Secondary image, may be wrapped */
+.img-layout--stacked-center-list .img-stack > a img {
+  width: 100%;
+  max-height: 40%;
+  object-fit: contain;
+  display: block;
+}
+
+/* List on the right column */
+.img-layout--stacked-center-list > ul {
+  margin: 0; /* optional */
+  padding-left: 1em;
+}
+
+
+label {
+  display: flex;
+  font-size: 60%;
+  font-weight: bold;
+}
+label input[type="range"] {
+  width: 100% !important;
+  display: inline !important;
+}
+
+canvas { width: 60%; }
+
+details {
+  font-size: 60%;
+}
+details li {
+  padding: 0;
+  margin: 0;
+}
+
+button {
+  margin: .1em;
+  padding: .2em .5em;
+  font-size: 50%;
+}
+
+select {
+  font-size: 40%;
+  padding: 2; margin: 2;
+}
+
+.blink { animation: blink 1s step-start infinite; color: red; }
+@keyframes blink { 50% { opacity: 0; }}
+
+.rainbow {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    violet
+  );
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0%; }
+  100% { background-position: 100%; }
+}
+
+.color-display {
+  width: 200px;
+  height: 100px;
+  border: 2px solid #333;
+  margin: 10px 0;
+}
+
+/* Name of the div used by the slide number */
+#slide-div {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+#impress-toolbar {
+  position: fixed;
+  bottom: 10px;
+  left: 0;
+  z-index: 1000;
+  /* Make child elements 70% smaller */
+  transform: scale(0.7);
+  transform-origin: top left;
+}
+#impress-toolbar select {
+  font-size: 50%;
 }
