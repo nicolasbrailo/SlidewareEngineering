@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>Arrays to Air</title>
+    <!-- https://www.flaticon.com/free-icon/line_15654932 -->
+    <link rel="shortcut icon" href="img/favicon.png" />
+    <link href="css/classless.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/pdfprint.css" rel="stylesheet" />
+    <link href="extdeps/deps.css" rel="stylesheet">
+
+  <style>
+  </style>
+
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Firefox</b> browser. <small>Chrome probably works too</small></p>
+</div>
+
+<div id="impress-toolbar"></div>
+
+<div id="impress"
+    data-transition-duration="0"
+    data-width="2020"
+    data-height="1200"
+    data-max-scale="3"
+    data-min-scale="0">
+
+<!-- Slide1 defines canvas position start with data-(x,y). Slide2 needs to
+  define data-rel-(x,y) to tell impress.js the default relative movement.
+  Successive slides don't need to define any (x,y), unless we need to
+  override the position of a slide -->
+<div class="step slide" id="arraysToAir" data-x="0" data-y="1920">
+  <h1><img src="img/favicon.png" />Arrays to air</h1>
+  <h2>Big ball of wibbly-wobbly, timey-wimey... air</h2>
+
+  <hr/>
+
+  <ul class="main-content-verticalcenter">
+    <li>How computers play sounds</li>
+    <li>How humans hear sound</li>
+    <li>DON'T USE HEADPHONES</li>
+  </ul>
+
+  <div class="bottom-badge">
+    <img width="25%" src="img/qr.png"/>
+    <p><a href="https://nicolasbrailo.github.io/">https://nicolasbrailo.github.io/</a></p>
+    <p class="fineprint">(PSA: Careful when scanning untrusted QR codes!)</p>
+  </div>
+</div>
+
+<div class="step slide" id="warning" data-rel-y="3840">
+  <h1>DON'T USE HEADPHONES</h1>
+  <h2 class="blink">DON'T USE HEADPHONES</h2>
+  <h3 class="rainbow">SERIOUSLY, DON'T USE HEADPHONES</h3>
+  <p class="main-content-verticalcenter">Some demos can have very loud, annoying or even painful audio. Don't use headphones.
+    Using headphones may be detrimental to your hearing health. The usage of the <span class="blink">&lt;blink&gt;</span> tag
+    in this presentation may be one of the very few acceptable usages of this tag in the history of HTML.</p>
+</div>
+
+
+<div class="step slide" id="basicTone">
+  <h2>This is a tone</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Some things are intuitive: amplitude ~ volume, frequency ~ pitch</li>
+      <li>Why is frequency going up from ~50 to 10K Hz? (Hz = Cycles per second)</li>
+      <li>Why is amplitude going up to .25?</li>
+      <li>Play with the amplitude and frequency sliders. Do they feel natural, or do they feel like the resolution at each end is wrong?</li>
+      <li>Does frequency affect how loud things sound? Check a tone at 200 Hz, and then at 5 KHz. If you keep the amplitude the same, do they sound equally loud?</li>
+      <li>When you move the amplitude bar around, does it sound glitchy?</li>
+    </ul>
+  </details>
+  <button id="basicTone_startStop">Start</button>
+  <label>Frequency <input type="range" id="basicTone_frequency" min="50" max="10000" value="440"></label>
+  <label>Amplitude <input type="range" id="basicTone_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <canvas id="basicTone_canvas"></canvas>
+</div>
+
+<div class="step slide" id="toneColour">
+  <h2>Color</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Sound is the way we perceive tiny periodic variations in air pressure level</li>
+      <li>You can make a parallel to light; although there are many differences between how we perceive light and sound,
+          to understand either we need to study how they behave, propagate, how to operate on them and how humans perceive it.</li>
+      <li>Don't read too much into the mapping itself, it's a 20 minute hack and not a good reflection of perceptual similarities
+          between human vision and hearing.</li>
+    </ul>
+  </details>
+  <button id="toneColour_startStop">Start</button>
+  <label>Frequency <input type="range" id="toneColour_frequency" min="50" max="10000" value="440"></label>
+  <label>Amplitude <input type="range" id="toneColour_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <div id="toneColour_colorDisplay" style="width: 95vw" class="color-display"></div>
+  <div id="toneColour_colorInfo"></div>
+</div>
+
+<div class="step slide" id="humanHearingRange">
+  <h2>Human speech and hearing range</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Human hearing is limited</li>
+      <li>Speech and music are a subset of what we hear</li>
+      <li>Audio equipment is limited in range too (what's the point of a speaker capable of producing sounds we can't hear?)</li>
+      <li><b>Why is frequency going up from ~50 to 10K Hz?</b> Most equipment can deal with this range. Above 10K and below 50 Hz things can get unreliable.</li>
+      <li>The point above applies to both, humans and electronic beings: computers trying to play a tone above 10K tend to do a poor job at it, but humans also
+        lose the top end of the hearing range as they age. You shouldn't rely on humans hearing things above 10K, even in populations without hearing impairments.
+        Fell free to use sound above 20KHz if your target audience is bats or dolphins.</li>
+      <li><b>Why is amplitude going up to .25?</b> Things sound loud with ".25" already, but also our hearing is not linear.</li>
+    </ul>
+  </details>
+  <img src="img/humanHearingRange1.png" alt="https://upload.wikimedia.org/wikipedia/commons/5/5c/H%C3%B6rfl%C3%A4che.svg" />
+  <img src="img/humanHearingRange2.jpg" alt="https://www.hearingprotech.com/images/stories/noise/scale-sound-frequencies.jpg" />
+</div>
+
+<div class="step slide" id="logOrLinRange">
+  <h2>Which slider feels more natural?</h2>
+  <button id="logOrLinRange_startStop">Start</button>
+  <label>Freq (lin) <input type="range" id="logOrLinRange_frequency_lin" min="50" max="10000" value="440"></label>
+  <label>Freq (log) <input type="range" id="logOrLinRange_frequency_log" min="50" max="10000" value="440"></label>
+
+  <label>Amplitude (lin) <input type="range" id="logOrLinRange_amplitude_lin" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <label>Amplitude (log) <input type="range" id="logOrLinRange_amplitude_log" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <canvas id="logOrLinRange_canvas"></canvas>
+</div>
+
+<div class="step slide" id="logHumanHearing">
+  <h2>Human hearing is logarithmic</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Human hearing is logarithmic, not linear: in the log-sweep, increments in pitch are perceptually even.
+        In the lin-sweep, we perceive the pitch to increase rapidly at first, and then 
+        <a href="https://en.wikipedia.org/wiki/Weber%E2%80%93Fechner_law">very slowly at the end</a> (logarithmically!).</li>
+      <li>We can't change how humans hear, but we can change the scale: log scales make work easier / more natural.</li>
+      <li>This works for both frequency and amplitude.</li>
+      <li>This works for music too, where doubling the frequency represents one octave. Your piano keys are linearly placed, but they play sound
+          using a log scale.</li>
+    </ul>
+  </details>
+  <p>Hear these two samples: which one sounds "natural"?</p>
+  <div style="display: block">
+    <button id="logHumanHearing_startStopLin">Start linear sweep</button>
+    <button id="logHumanHearing_startStopLog">Start log sweep</button>
+  </div>
+  <canvas id="logHumanHearing_canvasLin"></canvas>
+  <canvas id="logHumanHearing_canvasLog"></canvas>
+</div>
+
+<div class="step slide" id="logLoudnessHearing">
+  <h2>Loudness is a psychoacoustic effect</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Our hearing is logarithmic: this lets us enjoy loud Metal and also lets mosquitoes keep us awake at night.</li>
+      <li>Human hearing is extremely badly designed: besides being logarithmic (complicated), it is also very non linear.
+        <a href="https://en.wikipedia.org/wiki/Equal-loudness_contour">Different frequencies will have different apparent
+          loudness, even if their "volume" is the same</a>.</li>
+      <li>To make loudness more intuitive, we use a log scale (dB)</li>
+      <li>A computer can't know the volume of your speakers, so we rarely talk about actual sound-pressure-level (although you can,
+          if you have calibrated equipment). Instead, we talk in dBFS (Decibel Full Scale). dBFS are a log-scale to the loudest possible
+          sound your system can render (y=1; 0 dBFS).</li>
+      <li>20*log10(1) = 0; 20*log10(.5) ≈ -6; 20*log10(.25) ≈ -12; </li>
+      <li>Speech ~= -24 to -16 dBFS</li>
+      <li>Noise floor ~= -48 dBFS</li>
+      <li>To pretend the author of this note is scientifically rigorous: the difference between the loudest and quietest
+          sounds humans perceive is about 120dB.</li>
+      <li>There are curves to approximate human-perceptual equal-loudness. You may hear about these
+          <a href="https://en.wikipedia.org/wiki/A-weighting">as [a,b,c,d]-curves</a></li>
+    </ul>
+  </details>
+  <label>Amplitude (lin) <input type="range" id="logLoudnessHearing_amplitude_lin" min="0" max="1" step="0.05" value="0.1"></label>
+  <label>Amplitude (log) <input type="range" id="logLoudnessHearing_amplitude_log" min="0" max="1" step="0.05" value="0.1"></label>
+  <div style="display: flex">
+    <canvas id="logLoudnessHearing_canvas" style="display: inline-block; width: 60%"></canvas>
+    <img src="img/logLoudnessHearing_phon.png" style="display: inline-block; width: 30%" alt="https://en.wikipedia.org/wiki/Equal-loudness_contour" />
+  </div>
+</div>
+
+<div class="step slide" id="humansAreNotLinear">
+  <h2>Humans are generally non linear</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Non linearities also apply to human vision. Video people call it gamma correction to sound fancy.</li>
+      <li>Color receptors have a non linear response, so trying to render luminance in a linear way has the
+          same problems in both aural and visual effects.</li>
+      <li>The gamma scale above may or may not look fine depending on the monitor.
+          See <a href="https://en.wikipedia.org/wiki/Gamma_correction">here for details</a>.</li>
+    </ul>
+  </details>
+  <img src="img/humansAreNotLinear_YoungHelm.jpg" alt="https://en.wikipedia.org/wiki/File:YoungHelm.jpg" /><br>
+  <img src="img/humansAreNotLinear_gamma.png" alt="https://en.wikipedia.org/wiki/Gamma_correction" />
+</div>
+
+<div class="step slide" id="twoTonePhase">
+  <h2>Let's make it twice as complicated</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Phase is the third parameter we control over a tone [s = A*sin(f*t+φ)].</li>
+      <li>Phase is calculated in relation to an assumed 0 offset</li>
+      <li>On its own, changing the phase does nothing (for humans or for computers).</li>
+      <li>When our system has more than a single pure tone, phase effect between different tones becomes important
+        (hint: normal people don't spend a lot of time hearing pure tones. This means phase becomes important in everything but the simplest test setups.)</li>
+      <li>Phase effects become important in real acoustic environments, where (for example) speaker placement will cause constructive
+          and destructive interference zones with "valleys" and "peaks", where certain frequencies get a boost up or down.</li>
+      <li>Honorable mention: Phase is an important part of direction-of-arrival estimation (which we can do thanks to having two ears).</li>
+    </ul>
+  </details>
+  <button id="twoTonePhase_startStop">Start</button>
+  <label>Frequency <input type="range" id="twoTonePhase_freq" min="0" max="1" step="0.01" value="0.5"></label>
+  <label>Phase <input type="range" id="twoTonePhase_phase" min="0" max="1" step="0.01" value="0"></label>
+  <div style="display: flex">
+    <canvas id="twoTonePhase_canvas" style="display: inline-block; width: 60%"></canvas>
+    <a href="https://open.maricopa.edu/mccphy121jg5/chapter/normal-modes-of-a-standing-sound-wave/">
+      <img src="img/twoTonePhase_interference.png" width="60%"
+           alt="https://open.maricopa.edu/mccphy121jg5/chapter/normal-modes-of-a-standing-sound-wave/"></a>
+  </div>
+</div>
+
+<div class="step slide" id="twoToneTwoFreq">
+  <h2>Interference with different frequencies</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Playing with two tones creates many interesting effects. Things get a lot more fun, but also our tools to understand the system become inadequate:
+          a simple time-domain plot of the sine wave doesn't make it easy to visualize what we are hearing. We'll address that soon.</li>
+      <li>If the tones are far apart, you can hear them as two distinct entities
+            (think how weird this is: you only have one source, but you can hear two things. The human brain separates input audio into objects/sources!)</li>
+      <li>With a big enough difference, one tone shows as a pulsing effect over the other (but you will hear them as two different tones, of course).</li>
+      <li>With a small difference, you hear a low frequency beat together with the tone: there are either one or two tones,
+          plus a beat that's periodic (at |f1-f2|: we can use two high frequency tones to emulate a low frequency beat!).</li>
+      <li>Fun trivia: the beat effect is how you can tune a piano without electronic equipment: when the beat is gone, the frequencies match.</li>
+      <li>Fun trivia II: the beat effect is how you can hook up a generator to the grid without electronic equipment. If you hook up an incandescent
+          light between your generator and the power grid, you will see a pusling effect until the frequencies match. Once the frequencies match, there will
+          be no pulsing (if you see any light there is still a phase diferential that needs to be addressed. If you don't, expect a very loud and expensive boom).
+          Don't do this at home, messing with the power grid is dangerous.</li>
+      <li>The thing above is called a <a href="https://en.wikipedia.org/wiki/Synchroscope">synchroscope</a>. The name alone makes this super cool.</li>
+    </ul>
+  </details>
+  <button id="twoToneTwoFreq_startStop">Start</button>
+  <label>Frequency 1 <input type="range" id="twoToneTwoFreq_freq1" min="0" max="1" step="0.01" value="0.5"></label>
+  <label>Frequency 2 <input type="range" id="twoToneTwoFreq_freq2" min="0" max="1" step="0.01" value="0.5"></label>
+  <canvas id="twoToneTwoFreq_canvas"></canvas>
+</div>
+
+<div class="step slide" id="twoToneAnalysis">
+  <h2>Understanding complex sounds</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>A time-domain plot of our signal is of limited value once things get complicated. More than a single thing is complicated.</li>
+      <li>A frequency analysis of the signal is a good way to intuitively understand some effects.</li>
+      <li>You can see, for example, the low frequency beat that you get from playing two tones offset a small amount.</li>
+      <li>You can also see how playing two tones at the same frequency just adds up energy, and how you lose separation between tones,
+          visually, once they get close together.</li>
+      <li>Because of how FFTs work (spectral leakage), the graph doesn't show an exact peak where you may expect; depending on analysis params,
+          and depending on input frequency, the energy of the signal can be spread between different frequency bands. This is very easy to see with
+          low frequency tones, as the scale is log. If the signal under analysis were perfectly aligned with our FFT bin boundaries, we'd see just a line.</li>
+      <li>An FFT works by windowing the signal (analyzing the signal in chunks/frames). A longer window gives us better resolution (the frequency bins
+          are smaller). This needs more compute. A shorter window gives us better time resolution. You can't have both.</li>
+    </ul>
+  </details>
+  <button id="twoToneAnalysis_startStop">Start</button>
+  <label>Frequency 1 <input type="range" id="twoToneAnalysis_freq1" min="0" max="1" step="0.01" value="0.5"></label>
+  <label>Frequency 2 <input type="range" id="twoToneAnalysis_freq2" min="0" max="1" step="0.01" value="0.5"></label>
+  <div id="twoToneAnalysis_fft" class="audio-motion-analyzer"></div>
+</div>
+
+<div class="step slide" id="waveshape">
+  <h2>Tones aren't the only thing we can hear (or are they?)</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>We started analyzing "pure sine tones" because their behaviour is simple (both from a mathematical and psychoacoustic perspective)
+          and they let us understand how the system behaves (both, human auditory system and computers doing digital audio).</li>
+      <li>Pure sine tones are not the only thing we can hear, and they rarely occur in nature (certainly not without harmonics).</li>
+      <li>There are other tone types we can use to test a system.</li>
+      <li>Square waves are a way to exercise non-linearities, bandwidth limits and overshooting. A triangle function is similar to square,
+          but with less high frequency harmonics. </li>
+      <li>An impulse (not shown in this demo) is used to understand the full bandwidth transfer function of a (time-independent) system.
+          A sawtooth behaves similarly, but is easier to control.</li>
+      <li>Note how a sine signal has a single peak in their spectrum plot (if the signal aligns with our bins perfectly, it would have a
+          single vertical line. This is very unlikely, this demo uses a long FFT window of 16384 samples, and with a sample rate of
+          48Khz that's about 3 Hz per bin.)</li>
+      <li>Note how other signal types are "spread out" all over: a square wave will have infinite harmonics (requiring infinite bandwidth,
+          if we were to render them fully!). A triangle signal looks similar, but their harmonics decay much quicker (we still need infinite
+          bandwidth, but we can get pretty close to its bandwidth needs with a real system too)</li>
+    </ul>
+  </details>
+  <button id="waveshape_startStop">Toggle</button>
+  <label>Signal frequency<input type="range" id="waveshape_freq" min="0" max="1" step="0.01" value="0.5"></label>
+  <label>Signal type
+    <select id="waveshape_shape">
+      <option value="sine">Sine</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="square">Square [NO HEADPHONES!!!]</option>
+    </select>
+  </label>
+  <div style="display: flex">
+    <canvas id="waveshape_canvas" style="width: 50%"></canvas>
+    <div id="waveshape_fft" class="audio-motion-analyzer" style="height: 30%"></div>
+  </div>
+</div>
+
+<div class="step slide" id="customWaveshape">
+  <h2>Draw your own waveform</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>There's no need to limit ourselves to periodic functions, or even to well defined functions at all. We can render (play) arbitrary points.
+          Here you can draw points on a line to build your own "function". These will be repeated, periodically, as if they were a continuous signal.</li>
+      <li>This is, more or less, what your soundcard "sees": a vector of numbers. The vector you see here represents about 10 or 20ms,
+          depending on how this demo is configured.</li>
+      <li>This is also a good example of why no one operates directly on samples, when working with audio: doesn't matter how hard you
+          try, you won't be able to build by hand a signal that sounds even remotely good.</li>
+      <li>Instead, when working with audio, it's much more natural to operate on the frequency domain.</li>
+      <li>Best you can do with this demo: build some form of <a href="https://en.wikipedia.org/wiki/White_noise">white noise</a>.</li>
+    </ul>
+  </details>
+  <button id="customWaveshape_reset">Reset</button>
+  <button id="customWaveshape_randomize">Randomize</button>
+  <label>Interpolation
+    <select id="customWaveshape_interpolation">
+      <option value="linear">Linear</option>
+      <option value="spline">Spline</option>
+    </select>
+  </label>
+  <div class="img-layout img-layout--left-stack">
+    <canvas id="customWaveshape_editor"></canvas>
+    <div class="right-stack">
+      <div id="customWaveshape_fft" class="audio-motion-analyzer"></div>
+      <canvas id="customWaveshape_timedomainSink"></canvas>
+    </div>
+  </div>
+  <textarea id="customWaveshape_frame" style="width: 100%; font-size: 40%"></textarea>
+</div>
+
+<div class="step slide" id="fftApprox">
+  <h2>Audio is periodic, so we can decompose with sinusoids</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Let's see how to operate on audio in the frequency domain: periodic signals can be decomposed and expressed as a series of sine tones.</li>
+      <li>The frequency diagram on the left shows the pure sine tones we would need to reproduce a signal (their frequency and their amplitude/magnitude).
+          [Nitpick: they also show phase as the complex output of the FFT, which we don't plot or keep for this demo]</li>
+      <li>On the right, you can see a reconstructed signal: it uses WebAudio API to create an array of oscillators, then it configures each one to
+          one of the harmonics that a Fourier transform reports. This is not an inverse FFT (as we're discarding all phase information) but it's still a cool demo:</li>
+      <li>For a sine function, you can see how the number of harmonics makes little difference (it wouldn't make any, with a good FFT+iFFT implementation)</li>
+      <li>For a square signal, you can see how you need 8-10 harmonics before the reconstruction begins to resemble (and sound like!) a square signal.</li>
+      <li>You can also see how the square signal never really converges: <a href="https://en.wikipedia.org/wiki/Gibbs_phenomenon">Gibbs ringing</a> is very
+          clearly visible! (And using higher number of harmonics just reaches the precision limits of the very basic iFFT system this demo uses)</li>
+      <li>For a triangle signal: you can see how the demo just breaks down. This is because the author is lazy and discarded phase information,
+          which breaks this specific type of signal (there is no way to synchronize phase between different WebAudio elements, that's not what
+          WebAudio was built for! A better demo could be built using a worklet)</li>
+      <li>tldr: we can use sine tones to decompose and reconstruct any band-limited periodic signal (this doens't work for non periodic signals)</li>
+      <li>tldr II: an unintentional takeaway from this demo is how important phase is!</li>
+    </ul>
+  </details>
+  <button id="fftApprox_startStop">Start</button>
+  <label>Signal frequency <input type="range" id="fftApprox_freq" min="0" max="1" step="0.01" value="0.5"/></label>
+  <label>Reconstruct harmonics <input type="range" id="fftApprox_terms" min="1" max="20" step="1" value="1"/></label>
+  <label>Bypass<input type="checkbox" id="fftApprox_bypass"/></label>
+  <label>Signal type
+    <select id="fftApprox_shape">
+      <option value="sine">Sine</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="square">Square [NO HEADPHONES!!!]</option>
+    </select>
+  </label>
+  <div class="img-layout img-layout--left-stack">
+    <div id="fftApprox_fft" class="audio-motion-analyzer"></div>
+    <div class="right-stack">
+      <canvas id="fftApprox_timedomainReconstruct"></canvas>
+      <canvas id="fftApprox_timedomainSink"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="step slide" id="smbc">
+  <a href="https://www.smbc-comics.com/?id=2874"><img src="img/smbc.gif" /></a>
+</div>
+
+<div class="step slide" id="fftSpeech">
+  <h2>Voice decomposition with sinusoids</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Last slide said "we can only work with periodic signals". This slide works with non periodic signals, to prove the author of this set of demos
+          shouldn't be trusted. The demo captures your voice via microphone and reconstructs it using sine oscillators. Your voice is not periodic.</li>
+      <li>The demo has an analysis phase that uses an FFT to find the dominant frequencies and harmonics in your voice, then creates oscillators
+          at those frequencies. With few harmonics, the reconstruction sounds robotic/synthetic. Add more to improve "fidelity".</li>
+      <li>How does the demo deal with non-periodicness? Easy, we fake it. The input signal is chopped up into small frames of a few milliseconds each (about
+          50ms), and then we pretend each of those 50ms is a periodic function. The same analysis is repeated every 50ms, for 50ms, "refreshing" the
+          frequency content of our FFT, and of the oscillator bank we use to reconstruct it later.</li>
+      <li>For the reconstruction phase (inverse-FFT), phase information is discarded. The reconstruction won't be perfect (actually, it will be terrible)
+          but it demonstrates that any signal can be approximated as a sum of sine waves. Terrible as the reconstruction is, you should still be able to get
+          an intelligible sample. The fact that you can somewhat hear your voice through all the artifacts is actually impressive given how crude it is!</li>
+      <li>Nitpick: beyond discarding phase information, this demo has no mechanism to deal with windowing. Moving from one frame to the next will likely
+          result in a discontinuity (with an audible glitch). A proper iFFT would use an 
+          <a href="https://ccrma.stanford.edu/~jos/OLA/Weighted_Overlap_Add.html">overlapping window and other fancy techniques</a> to ensure a smooth
+          transition between frames</li>
+      <li>NB: This demo is an abuse of WebAudio API, quite CPU intensive, and not guaranteed to work. Running it for a period of time will likely turn
+          your computer into a portable heating device.</li>
+      <li>Bonus: Untick continuous update. This disables the periodic update in this demo. Does the effect sound familiar? This is a very common audio glitch.
+          It happens when the rendering side is active but the producer is stuck/dead/deadlocked. Friends call this "buffer underrun".</li>
+    </ul>
+  </details>
+  <button id="fftSpeech_record">Record</button>
+  <button id="fftSpeech_play" disabled>Play</button>
+  <label>Reconstruct harmonics <input type="range" id="fftSpeech_terms" min="1" max="100" step="1" value="1"/></label>
+  <label>Bypass (hear original)<input type="checkbox" id="fftSpeech_bypass"/></label>
+  <label>Continuous update<input type="checkbox" id="fftSpeech_continuous" checked/></label>
+  <div class="img-layout img-layout--left-stack">
+    <div id="fftSpeech_fft" class="audio-motion-analyzer"></div>
+    <div class="right-stack">
+      <canvas id="fftSpeech_timedomainRecorded"></canvas>
+      <canvas id="fftSpeech_timedomainSink"></canvas>
+    </div>
+  </div>
+</div>
+
+
+<div class="step slide" id="humanVoice">
+  <h2>An even better tool to understand complex signals.</h2>
+  <details>
+    <summary>Cheatsheet</summary>
+    <ul>
+      <li>Frequency analysis works well to understand a periodic signal. We can still understand a non periodic signal using it: we can pretend the non
+          periodic signal is periodic if we chop it up into small enough slices, and then continuously run an analysis to understand how it looks like.</li>
+      <li>By looking at a plot of (frequency X magnitude X time, AKA spectrogram) we can see, at a glance, complex structures in different sounds. For example,
+          we can understand the harmonics most prominent in a musical instrument, or how much pitch changes between different human speakers.</li>
+      <li>It's also easy to spot "glitches": anything that breaks the structure in the FFT plot is very likely to result in a pop or glitch.</li>
+      <li>Discontinuities are also easy to detect: a discontinuity is just like a square function, which we know has infinite bandwidth.</li>
+      <li>We can now answer the question from the first slide: when the amplitude bar is moved around, things sound glitchy because there
+          is a discontinuity in the audio signal. This is introduced by a step change in the volume (which is very easily fixed by
+          <a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioParam#a-rate">properly using WebAudio a-rate params</a>, but then
+          I wouldn't have any way to keep the suspense during all of these demos)</li>
+      <li>A spectrogram makes it even easier to study some of our test signals: look how clear it is that different signal types have different harmonics!</li>
+    </ul>
+  </details>
+  <label>Source
+    <select id="humanVoice_src">
+      <option value="mic">Your mic</option>
+      <option value="sine">Sine</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="square">Square</option>
+    </select>
+  </label>
+  <canvas id="humanVoice_fft"></canvas>
+</div>
+
+<div class="step slide" id="spectrograms">
+  <h1>Now that we know what a spectrogram is</h1>
+  <ul>
+    <li><b>Humans are badly designed</b>: logarithmic, non-linear, phase-deaf, and bandlimited. Can't wait for the robot uprising.</li>
+    <li><b>Audio: just arrays</b>: numbers representing wibbly-wobbly air pressure over time.</li>
+    <li><b>Audio signal: many sine waves in a trenchcoat</b>: use the frequency domain!</li>
+    <li><b>Simple signals are valuable</b>: a pure tone is a great way of understanding how your system behaves.</li>
+    <li><b>Know your tools</b>: a spectrogram or a frequency plot can tell you a lot about your signal.</li>
+    <li><b>Operate in the frequency domain</b>: audio operations on the frequency domain will give you better results (future WebAudio set of demos here?)</li>
+  </ul>
+</div>
+
+</div>
+
+<script src="extdeps/deps.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
