@@ -683,10 +683,10 @@ class RIRStrategy extends Strategy {
     return {
       irLength: 20480,             // Impulse response length (~427ms at 48kHz)
       measurementDurationMs: 1000, // How long to measure
-      testSignalType: 'dirac_square',
+      testSignalType: 'no_rir',
       diracPulseWidth: 48,         // Pulse width in samples
       mlsOrder: 14,                // MLS order, only used if testSignalType='mls'
-      echoAttenuation: 1.0,        // Scale factor for echo subtraction
+      echoAttenuation: 2.5,        // Scale factor for echo subtraction
     };
   }
 
@@ -721,15 +721,28 @@ class RIRStrategy extends Strategy {
     return tracks;
   }
 
-  onSelected() {
-    // Restart measurement every time we're selected
-    this.rir = new IRMeasurementHelper(this.config);
-  }
-
   onMessage(type, value) {
     if (type === 'rir_config') {
+      // Find keys that actually changed value
+      const changedKeys = Object.keys(value).filter(key => this.config[key] !== value[key]);
       Object.assign(this.config, value);
-      this.onSelected();
+
+      // Only restart measurement if a key other than echoAttenuation changed
+      const skipResetKeys = new Set(['echoAttenuation']);
+      const needsReset = changedKeys.some(key => !skipResetKeys.has(key));
+
+      if (needsReset) {
+        this.onSelected();
+      }
+    }
+  }
+
+  onSelected() {
+    // Restart measurement every time we're selected
+    if (this.config.testSignalType == 'no_rir') {
+      this.rir = new IRMeasurementHelperMock();
+    } else {
+      this.rir = new IRMeasurementHelper(this.config);
     }
   }
 
@@ -752,7 +765,7 @@ class RIRStrategy extends Strategy {
     }
 
     // Apply sparse FIR filter for echo cancellation
-    // Uses trimmed IR (skips leading zeros) for ~10x speedup
+    // Uses trimmed IR (skips leading zeros) to keep convolution size maneagable
     const atten = this.config.echoAttenuation;
     const irTrimmed = this.rir.irTrimmed;
     const irDelayOffset = this.rir.irDelayOffset;
@@ -760,7 +773,7 @@ class RIRStrategy extends Strategy {
     const delayLineLen = this.farEndDelayLine.length;
 
     for (let i = 0; i < nSamples; i++) {
-      // Write far-end to circular buffer
+      // Write far-end to circular buffer. The length of the ringbuff determines "how far back" we can search, ie the delay that's tolerable.
       this.farEndDelayPos = (this.farEndDelayPos + 1) % delayLineLen;
       this.farEndDelayLine[this.farEndDelayPos] = farEndFrame[i];
 
@@ -771,6 +784,7 @@ class RIRStrategy extends Strategy {
         const delayIdx = (this.farEndDelayPos - irDelayOffset - k + 5*delayLineLen) % delayLineLen;
         echoEstimate += irTrimmed[k] * this.farEndDelayLine[delayIdx];
       }
+      echoEstimate *= atten;
 
       // Record echo estimate if debug recording active
       if (this.debugEchoEstimate && this.debugWritePos < this.fauxecState.debugMaxSamples) {
@@ -778,7 +792,7 @@ class RIRStrategy extends Strategy {
       }
 
       // Subtract estimated echo
-      outFrame[i] = nearEndFrame[i] - atten * echoEstimate;
+      outFrame[i] = nearEndFrame[i] - echoEstimate;
     }
   }
 }
@@ -838,20 +852,30 @@ class NLMSStrategy extends Strategy {
   }
 
   onFrame(nSamples, nearEndFrame, farEndFrame, outFrame) {
+    // TODO: Add echo estimate to debug tracks
+    // TODO: add a way to export fitler state, so it can be plotted
     const { h, xBuf } = this;
     const len = this.config.filterLength;
     const mu = this.config.stepSize;
-    const eps = this.config.epsilon;
     const leakage = this.config.leakage;
+    const eps = this.config.epsilon;
+
+    // minDelay here is configured, instead of learnt like in RIRStrategy. This is because RIR has a reliable source to learn
+    // the delay, but LMS doesn't. With RIR, we explicitly measure the delay as part of the impulse response, and we can deduce
+    // that the minimum delay is the time that takes for the first peak to correlate, and all leading samples are zero. With LMS,
+    // there is no explicit measure step, this is implicit by LMS making the first N taps zero. minDelaySamples could be skipped
+    // entirely (and we'd waste some computation, but the code already barely fits in WebAudioAPI's frame quantum), or it could be
+    // refined after the LMS filter has converged (but this adds complexity, which isn't great for my example)
     const minDelay = this.minDelaySamples;
 
     for (let i = 0; i < nSamples; i++) {
-      // Write new far-end sample to circular buffer
+      // Write last farEnd to delay line, so we can use it later (the rest of the AEC strategy operates on the delayed
+      // frame, so that nearEnd is "lined up" with the farEnd received $delay time in the past
       this.xBufPos = (this.xBufPos + 1) % len;
       xBuf[this.xBufPos] = farEndFrame[i];
 
       // Compute estimated echo: y_hat = h * x (convolution)
-      // and input power for normalization
+      // input power for normalization (otherwise big input signal => big correction, small signal => small correction)
       let yHat = 0;
       let xPower = 0;
       for (let j = minDelay; j < len; j++) {
@@ -861,15 +885,29 @@ class NLMSStrategy extends Strategy {
         xPower += xVal * xVal;
       }
 
-      // Error = near-end (desired) - estimated echo
+      // Error = nearEnd  - estimatedEcho. If we assume no near end talk, then `micSignal - expectedEcho = 0`, and any non-zero
+      // sample is due to error in filter. In practice, non-zero is because near end was active, or because random noise, which is
+      // why this implementation breaks on double talk
       const error = nearEndFrame[i] - yHat;
       outFrame[i] = error;
 
-      // NLMS update: h[j] += (mu / (eps + ||x||^2)) * error * x[n-j]
-      const normFactor = mu / (eps + xPower);
+      if (xPower < eps) {
+        // farEndDelay had no signal at this tap length, so there is no point in updating the error (we'd just be using noise
+        // as an error estimate)
+        continue;
+      }
+
+      // NLMS update: h[j] += (mu / energy) * error * x[n-j]; the error is normalized by mu (adapt speed) and energy (error is
+      // already proportional to energy, so we normalize it to ensure we have consistent update steps)
+      const normFactor = mu / xPower;
       for (let j = minDelay; j < len; j++) {
         const xIdx = (this.xBufPos - j + len) % len;
-        // Leaky LMS: slight decay prevents coefficient drift
+        // Leaky LMS: values slowly decay, so that (1) taps without any echo path slowly converge to zero, even if they become
+        // updated (eg by random noise). This prevents an error from persisting forever if there is no echo path at this tap
+        // delay. (2) Decay to zero parts of the filter that are "unused" (eg if farEnd consists of a signal that doesn't consistently
+        // update all the taps, for example a tone with a single frequency, then the filter will learn the transfer function in the
+        // system for that frequency, and will never update others. Leakage will make the filter "prefer" solutions where these filters
+        // are zero.
         h[j] = leakage * h[j] + normFactor * error * xBuf[xIdx];
       }
 
@@ -948,7 +986,19 @@ class NoisyFauxECProcessor extends AudioWorkletProcessor {
 
     this.port.onmessage = (event) => {
       const { type, value } = event.data;
-      if (type === 'setMode') {
+      if (type === 'setConfigs') {
+        const { mode, timeAligned, halfDuplex, rir, nlms } = value;
+        // Set mode
+        if (mode && this.strategies[mode] && this.mode !== mode) {
+          this.mode = mode;
+          this.strategies[mode].onSelected();
+        }
+        // Dispatch configs to strategies
+        if (timeAligned) this.strategies.timeAlignedSubtract.onMessage('timeAligned_config', timeAligned);
+        if (halfDuplex) this.strategies.halfDuplex.onMessage('halfDuplex_config', halfDuplex);
+        if (rir) this.strategies.rir.onMessage('rir_config', rir);
+        if (nlms) this.strategies.lms.onMessage('nlms_config', nlms);
+      } else if (type === 'setMode') {
         if (!this.strategies[value]) {
           console.error(`${value} isn't a supported FauxEC strategy`);
         } else {
@@ -971,18 +1021,23 @@ class NoisyFauxECProcessor extends AudioWorkletProcessor {
       } else if (type === 'getStats') {
         this.pubStats();
       } else if (type === 'getDefaultConfigs') {
-        this.port.postMessage({ type: 'xCorrDefaults', value: XCorrHelper.getDefaultCfg() });
-        this.port.postMessage({ type: 'halfDuplexDefaults', value: HalfDuplexStrategy.getDefaultCfg() });
-        this.port.postMessage({ type: 'rirDefaults', value: RIRStrategy.getDefaultCfg() });
-        this.port.postMessage({ type: 'nlmsDefaults', value: NLMSStrategy.getDefaultCfg() });
+        this.port.postMessage({
+          type: 'defaultConfigs',
+          value: {
+            xCorr: XCorrHelper.getDefaultCfg(),
+            halfDuplex: HalfDuplexStrategy.getDefaultCfg(),
+            rir: RIRStrategy.getDefaultCfg(),
+            nlms: NLMSStrategy.getDefaultCfg(),
+          },
+        });
       } else if (type === 'startDebugRecording') {
         this.startDebugRecording();
       } else if (type === 'stopDebugRecording') {
         this.stopDebugRecording();
-      } else {
-        for (const strategy of Object.values(this.strategies)) {
-          strategy.onMessage(type, value);
-        }
+      } else if (type === 'nlms_reset') {
+        this.strategies.lms.onMessage('nlms_reset', value);
+      } else if (type === 'rir_measure') {
+        this.strategies.rir.onSelected();
       }
     };
   }

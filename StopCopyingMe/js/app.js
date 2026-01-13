@@ -19,6 +19,11 @@ async function initSlideDemo(slideTitle) {
     console.log("Init demos for", slideTitle);
     window.audioContext = new (window.AudioContext || webkitAudioContext)();
 
+    // Load all required worklets
+    if (slideDemosIndex.workletsToLoad) {
+      await Promise.all(slideDemosIndex.workletsToLoad.map(path => audioContext.audioWorklet.addModule(path)));
+    }
+
     slideRunCtx = {
       slideTitle,
       cbs: await slideDemosIndex[slideTitle](audioContext),

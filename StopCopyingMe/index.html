@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=1024" />
-    <title>Stop copying me</title>
-    <!-- https://www.flaticon.com/free-icon/line_15654932 -->
+    <title>Stop copying me!</title>
     <link rel="shortcut icon" href="img/favicon.png" />
     <link href="css/classless.css" rel="stylesheet">
     <link href="css/common.css" rel="stylesheet" />
@@ -35,10 +34,10 @@
   define data-rel-(x,y) to tell impress.js the default relative movement.
   Successive slides don't need to define any (x,y), unless we need to
   override the position of a slide -->
-<div class="step slide" id="fx" data-x="0" data-y="1920">
-  <h1><img src="img/favicon.png" />Stopy copying me!</h1>
+<div class="step slide" id="aecs" data-x="0" data-y="1920">
+  <h1><img src="img/favicon.png" />Echo explorer</h1>
   <h2>Echo</h2>
-  <h3>Echo</h3>
+  <h3>Echo</h4>
   <h4>Echo</h4>
   <h5>Echo</h5>
 
@@ -77,11 +76,152 @@
   <canvas id="stopCopyingMe_outputTd"></canvas>
 </div>
 
-<div class="step slide" id="noAEC">
-  <button id="noAEC_rec">Mic enable</button>
-  <button id="noAEC_play" disabled>Play</button>
-  <button id="noAEC_debugRec">Debug tracks</button>
-  <select id="noAEC_mode">
+<div class="step slide" id="fauxecTutorial">
+  <button id="fauxecTutorial_rec">Mic enable</button>
+  <button id="fauxecTutorial_play" disabled>Play</button>
+  <button id="fauxecTutorial_debugRec">Debug tracks</button>
+  <button id="fauxecTutorial_evalPerf" disable>Eval Perf</button>
+  <select id="fauxecTutorial_mode">
+    <option value="passthrough">Passthrough</option>
+    <option value="silenceMic">Silence mic</option>
+    <option value="testTone">Test Tone</option>
+  </select>
+  <pre id="fauxecTutorial_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="fauxecTutorial_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="fauxecTutorial_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="fauxecTutorial_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="fauxecTutorial_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="fauxecTutorial_renderTd"></canvas>
+  <canvas id="fauxecTutorial_micTd"></canvas>
+</div>
+
+<div class="step slide" id="halfDuplex">
+  <button id="halfDuplex_rec">Mic enable</button>
+  <button id="halfDuplex_play" disabled>Play</button>
+  <button id="halfDuplex_debugRec">Debug tracks</button>
+  <button id="halfDuplex_evalPerf" disable>Eval Perf</button>
+  <details>
+    <summary>Half duplex config</summary>
+    <label>Attack <input type="range" id="halfDuplex_attackMs" min="1" max="100"> <span id="halfDuplex_attackMs_val"></span>ms</label>
+    <label>Decay <input type="range" id="halfDuplex_decayMs" min="10" max="1000"> <span id="halfDuplex_decayMs_val"></span>ms</label>
+    <label>Threshold <input type="range" id="halfDuplex_thresholdDb" min="-60" max="0"> <span id="halfDuplex_thresholdDb_val"></span>dB</label>
+    <label>Gated: <span id="halfDuplex_gated">●</span></label>
+  </details>
+  <pre id="halfDuplex_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="halfDuplex_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="halfDuplex_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="halfDuplex_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="halfDuplex_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="halfDuplex_renderTd"></canvas>
+  <canvas id="halfDuplex_micTd"></canvas>
+</div>
+
+<div class="step slide" id="naiveDiff">
+  <button id="naiveDiff_rec">Mic enable</button>
+  <button id="naiveDiff_play" disabled>Play</button>
+  <button id="naiveDiff_debugRec">Debug tracks</button>
+  <button id="naiveDiff_evalPerf" disable>Eval Perf</button>
+  <pre id="naiveDiff_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="naiveDiff_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="naiveDiff_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="naiveDiff_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="naiveDiff_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="naiveDiff_renderTd"></canvas>
+  <canvas id="naiveDiff_micTd"></canvas>
+</div>
+
+<div class="step slide" id="timeAlignedDiff">
+  <button id="timeAlignedDiff_rec">Mic enable</button>
+  <button id="timeAlignedDiff_play" disabled>Play</button>
+  <button id="timeAlignedDiff_debugRec">Debug tracks</button>
+  <button id="timeAlignedDiff_evalPerf" disable>Eval Perf</button>
+  <details>
+    <summary>Time aligner config</summary>
+    <label>Min Delay <input type="range" id="timeAlignedDiff_taMinDelayMs" min="0" max="200"> <span id="timeAlignedDiff_taMinDelayMs_val"></span>ms</label>
+    <label>Update Interval <input type="range" id="timeAlignedDiff_taUpdateIntervalFrames" min="100" max="5000" step="100"> <span id="timeAlignedDiff_taUpdateIntervalFrames_val"></span> frames</label>
+    <label>Echo Window <input type="range" id="timeAlignedDiff_taEchoTimeWindowSizeMs" min="100" max="2000" step="50"> <span id="timeAlignedDiff_taEchoTimeWindowSizeMs_val"></span>ms</label>
+    <label>Step Size <input type="range" id="timeAlignedDiff_taStepSize" min="1" max="200"> <span id="timeAlignedDiff_taStepSize_val"></span> samples</label>
+    <label>TX Threshold <input type="range" id="timeAlignedDiff_taTxThresholdDb" min="-80" max="0"> <span id="timeAlignedDiff_taTxThresholdDb_val"></span>dB</label>
+    <label>RX Threshold <input type="range" id="timeAlignedDiff_taRxThresholdDb" min="-80" max="0"> <span id="timeAlignedDiff_taRxThresholdDb_val"></span>dB</label>
+    <label>Smoothing α <input type="range" id="timeAlignedDiff_taSmoothingAlpha" min="0.01" max="1" step="0.01"> <span id="timeAlignedDiff_taSmoothingAlpha_val"></span></label>
+    <label>NCC Threshold <input type="range" id="timeAlignedDiff_taNccThreshold" min="0" max="1" step="0.05"> <span id="timeAlignedDiff_taNccThreshold_val"></span></label>
+    <label>XCorr Window <input type="range" id="timeAlignedDiff_taXcorrWindowSize" min="512" max="4096" step="128"> <span id="timeAlignedDiff_taXcorrWindowSize_val"></span> samples</label>
+    <label>Echo Attenuation <input type="range" id="timeAlignedDiff_taEchoAttenuation" min="0.01" max="1" step="0.01"> <span id="timeAlignedDiff_taEchoAttenuation_val"></span></label>
+    <label>Loop time locked: <span id="timeAlignedDiff_taXcorrLock">●</span></label>
+  </details>
+  <pre id="timeAlignedDiff_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="timeAlignedDiff_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="timeAlignedDiff_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="timeAlignedDiff_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="timeAlignedDiff_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="timeAlignedDiff_renderTd"></canvas>
+  <canvas id="timeAlignedDiff_micTd"></canvas>
+</div>
+
+<div class="step slide" id="rir">
+  <button id="rir_rec">Mic enable</button>
+  <button id="rir_play" disabled>Play</button>
+  <button id="rir_debugRec">Debug tracks</button>
+  <button id="rir_evalPerf" disable>Eval Perf</button>
+  <details>
+    <summary>Room impulse response config</summary>
+    <label>IR Length/Echo time <input type="range" id="rir_rirIrLength" min="1024" max="32768" step="1024"> <span id="rir_rirIrLength_val"></span></label>
+    <label>Measurement Duration <input type="range" id="rir_rirMeasurementDurationMs" min="500" max="5000" step="100"> <span id="rir_rirMeasurementDurationMs_val"></span>ms</label>
+    <label>Test Signal Type <select id="rir_rirTestSignalType">
+      <option value="no_rir">Skip RIR</option>
+      <option value="dirac_sine">Dirac sine</option>
+      <option value="dirac_square">Dirac square</option>
+      <option value="mls">Maximum length sequence (whitenoiseish)</option>
+    </select></label>
+    <label>Dirac Pulse Width <input type="range" id="rir_rirDiracPulseWidth" min="1" max="128"> <span id="rir_rirDiracPulseWidth_val"></span> samples</label>
+    <label>MLS Order <input type="range" id="rir_rirMlsOrder" min="10" max="16"> <span id="rir_rirMlsOrder_val"></span></label>
+    <label>Echo Attenuation <input type="range" id="rir_rirEchoAttenuation" min="0.01" max="4" step="0.01"> <span id="rir_rirEchoAttenuation_val"></span></label>
+    <button id="rir_triggerRIRMeasure">Measure RIR again</button>
+  </details>
+  </details>
+  <pre id="rir_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="rir_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="rir_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="rir_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="rir_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="rir_renderTd"></canvas>
+  <canvas id="rir_micTd"></canvas>
+</div>
+
+<div class="step slide" id="lms">
+  <button id="lms_rec">Mic enable</button>
+  <button id="lms_play" disabled>Play</button>
+  <button id="lms_debugRec">Debug tracks</button>
+  <button id="lms_evalPerf" disable>Eval Perf</button>
+  <details>
+    <summary>LMS config</summary>
+    <label>Filter Length <input type="range" id="lms_lmsFilterLength" min="1024" max="8192" step="512"> <span id="lms_lmsFilterLength_val"></span></label>
+    <label>Step Size (μ) <input type="range" id="lms_lmsStepSize" min="0.01" max="1" step="0.01"> <span id="lms_lmsStepSize_val"></span></label>
+    <label>Leakage <input type="range" id="lms_lmsLeakage" min="0.99" max="1" step="0.0001"> <span id="lms_lmsLeakage_val"></span></label>
+    <label>Min Delay <input type="range" id="lms_lmsMinDelayMs" min="0" max="200"> <span id="lms_lmsMinDelayMs_val"></span>ms</label>
+    <button id="lms_lmsReset">Reset filter</button>
+  </details>
+  <pre id="lms_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="lms_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="lms_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="lms_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="lms_speech3" src="clips/speech3.wav" loop controls></audio>
+  <hr/>
+  <canvas id="lms_renderTd"></canvas>
+  <canvas id="lms_micTd"></canvas>
+</div>
+
+<div class="step slide" id="playground">
+  <button id="playground_rec">Mic enable</button>
+  <button id="playground_play" disabled>Play</button>
+  <button id="playground_debugRec">Debug tracks</button>
+  <button id="playground_evalPerf" disable>Eval Perf</button>
+  <select id="playground_mode">
     <!--
       Notes
       - Passthrough: easier to see natural attenuation
@@ -94,7 +234,11 @@
         - Measuring RIR is disruptive
         - Note how the IR lenght needs to be longer than the echo tail, otherwise results are garbage
         - If the IR changes (people move around) then the IR needs to be recalculated
-        - Playing with the echo attenuation let's us over/under attenuate, as the RIR isn't entirely precise
+        - Playing with the echo attenuation let's us over/under attenuate, as the RIR isn't entirely precise. It's almost impossible
+          to get a good value, there is a lot of residual echo.
+        - Demo is SUPER hard to get right: the latency changes dynamically, and even a millisecond of difference breaks the AEC. It's likely
+          that taking a few RIR measurements is needed before this demo work.
+        - Parameters need to be tuned for each setup, especially echo attenuation.
     -->
     <option value="passthrough">Passthrough</option>
     <option value="silenceMic">Silence mic</option>
@@ -107,46 +251,56 @@
   </select>
   <details>
     <summary>Half duplex config</summary>
-    <label>Attack <input type="range" id="noAEC_attackMs" min="1" max="100"> <span id="noAEC_attackMs_val"></span>ms</label>
-    <label>Decay <input type="range" id="noAEC_decayMs" min="10" max="1000"> <span id="noAEC_decayMs_val"></span>ms</label>
-    <label>Threshold <input type="range" id="noAEC_thresholdDb" min="-60" max="0"> <span id="noAEC_thresholdDb_val"></span>dB</label>
-    <label>Gated: <span id="noAEC_gated">●</span></label>
+    <label>Attack <input type="range" id="playground_attackMs" min="1" max="100"> <span id="playground_attackMs_val"></span>ms</label>
+    <label>Decay <input type="range" id="playground_decayMs" min="10" max="1000"> <span id="playground_decayMs_val"></span>ms</label>
+    <label>Threshold <input type="range" id="playground_thresholdDb" min="-60" max="0"> <span id="playground_thresholdDb_val"></span>dB</label>
+    <label>Gated: <span id="playground_gated">●</span></label>
   </details>
   <details>
     <summary>Time aligner config</summary>
-    <label>Min Delay <input type="range" id="noAEC_taMinDelayMs" min="0" max="200"> <span id="noAEC_taMinDelayMs_val"></span>ms</label>
-    <label>Update Interval <input type="range" id="noAEC_taUpdateIntervalFrames" min="100" max="5000" step="100"> <span id="noAEC_taUpdateIntervalFrames_val"></span> frames</label>
-    <label>Echo Window <input type="range" id="noAEC_taEchoTimeWindowSizeMs" min="100" max="2000" step="50"> <span id="noAEC_taEchoTimeWindowSizeMs_val"></span>ms</label>
-    <label>Step Size <input type="range" id="noAEC_taStepSize" min="1" max="200"> <span id="noAEC_taStepSize_val"></span> samples</label>
-    <label>TX Threshold <input type="range" id="noAEC_taTxThresholdDb" min="-80" max="0"> <span id="noAEC_taTxThresholdDb_val"></span>dB</label>
-    <label>RX Threshold <input type="range" id="noAEC_taRxThresholdDb" min="-80" max="0"> <span id="noAEC_taRxThresholdDb_val"></span>dB</label>
-    <label>Smoothing α <input type="range" id="noAEC_taSmoothingAlpha" min="0.01" max="1" step="0.01"> <span id="noAEC_taSmoothingAlpha_val"></span></label>
-    <label>NCC Threshold <input type="range" id="noAEC_taNccThreshold" min="0" max="1" step="0.05"> <span id="noAEC_taNccThreshold_val"></span></label>
-    <label>XCorr Window <input type="range" id="noAEC_taXcorrWindowSize" min="512" max="4096" step="128"> <span id="noAEC_taXcorrWindowSize_val"></span> samples</label>
-    <label>Echo Attenuation <input type="range" id="noAEC_taEchoAttenuation" min="0.01" max="1" step="0.01"> <span id="noAEC_taEchoAttenuation_val"></span></label>
-    <label>Loop time locked: <span id="noAEC_taXcorrLock">●</span></label>
+    <label>Min Delay <input type="range" id="playground_taMinDelayMs" min="0" max="200"> <span id="playground_taMinDelayMs_val"></span>ms</label>
+    <label>Update Interval <input type="range" id="playground_taUpdateIntervalFrames" min="100" max="5000" step="100"> <span id="playground_taUpdateIntervalFrames_val"></span> frames</label>
+    <label>Echo Window <input type="range" id="playground_taEchoTimeWindowSizeMs" min="100" max="2000" step="50"> <span id="playground_taEchoTimeWindowSizeMs_val"></span>ms</label>
+    <label>Step Size <input type="range" id="playground_taStepSize" min="1" max="200"> <span id="playground_taStepSize_val"></span> samples</label>
+    <label>TX Threshold <input type="range" id="playground_taTxThresholdDb" min="-80" max="0"> <span id="playground_taTxThresholdDb_val"></span>dB</label>
+    <label>RX Threshold <input type="range" id="playground_taRxThresholdDb" min="-80" max="0"> <span id="playground_taRxThresholdDb_val"></span>dB</label>
+    <label>Smoothing α <input type="range" id="playground_taSmoothingAlpha" min="0.01" max="1" step="0.01"> <span id="playground_taSmoothingAlpha_val"></span></label>
+    <label>NCC Threshold <input type="range" id="playground_taNccThreshold" min="0" max="1" step="0.05"> <span id="playground_taNccThreshold_val"></span></label>
+    <label>XCorr Window <input type="range" id="playground_taXcorrWindowSize" min="512" max="4096" step="128"> <span id="playground_taXcorrWindowSize_val"></span> samples</label>
+    <label>Echo Attenuation <input type="range" id="playground_taEchoAttenuation" min="0.01" max="1" step="0.01"> <span id="playground_taEchoAttenuation_val"></span></label>
+    <label>Loop time locked: <span id="playground_taXcorrLock">●</span></label>
   </details>
   <details>
     <summary>Room impulse response config</summary>
-    <label>IR Length/Echo time <input type="range" id="noAEC_rirIrLength" min="1024" max="32768" step="1024"> <span id="noAEC_rirIrLength_val"></span></label>
-    <label>Measurement Duration <input type="range" id="noAEC_rirMeasurementDurationMs" min="500" max="5000" step="100"> <span id="noAEC_rirMeasurementDurationMs_val"></span>ms</label>
-    <label>Test Signal Type <select id="noAEC_rirTestSignalType">
+    <label>IR Length/Echo time <input type="range" id="playground_rirIrLength" min="1024" max="32768" step="1024"> <span id="playground_rirIrLength_val"></span></label>
+    <label>Measurement Duration <input type="range" id="playground_rirMeasurementDurationMs" min="500" max="5000" step="100"> <span id="playground_rirMeasurementDurationMs_val"></span>ms</label>
+    <label>Test Signal Type <select id="playground_rirTestSignalType">
+      <option value="no_rir">Skip RIR</option>
       <option value="dirac_sine">Dirac sine</option>
       <option value="dirac_square">Dirac square</option>
       <option value="mls">Maximum length sequence (whitenoiseish)</option>
     </select></label>
-    <label>Dirac Pulse Width <input type="range" id="noAEC_rirDiracPulseWidth" min="1" max="128"> <span id="noAEC_rirDiracPulseWidth_val"></span> samples</label>
-    <label>MLS Order <input type="range" id="noAEC_rirMlsOrder" min="10" max="16"> <span id="noAEC_rirMlsOrder_val"></span></label>
-    <label>Echo Attenuation <input type="range" id="noAEC_rirEchoAttenuation" min="0.01" max="2" step="0.01"> <span id="noAEC_rirEchoAttenuation_val"></span></label>
+    <label>Dirac Pulse Width <input type="range" id="playground_rirDiracPulseWidth" min="1" max="128"> <span id="playground_rirDiracPulseWidth_val"></span> samples</label>
+    <label>MLS Order <input type="range" id="playground_rirMlsOrder" min="10" max="16"> <span id="playground_rirMlsOrder_val"></span></label>
+    <label>Echo Attenuation <input type="range" id="playground_rirEchoAttenuation" min="0.01" max="4" step="0.01"> <span id="playground_rirEchoAttenuation_val"></span></label>
+    <button id="playground_triggerRIRMeasure">Measure RIR again</button>
   </details>
-  <pre id="noAEC_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
-  <audio id="noAEC_music" src="clips/music1.mp3" loop controls></audio>
-  <audio id="noAEC_speech1" src="clips/speech1.mp3" loop controls></audio>
-  <audio id="noAEC_speech2" src="clips/speech2.mp3" loop controls></audio>
-  <audio id="noAEC_speech3" src="clips/speech3.wav" loop controls></audio>
+  <details>
+    <summary>LMS config</summary>
+    <label>Filter Length <input type="range" id="playground_lmsFilterLength" min="1024" max="8192" step="512"> <span id="playground_lmsFilterLength_val"></span></label>
+    <label>Step Size (μ) <input type="range" id="playground_lmsStepSize" min="0.01" max="1" step="0.01"> <span id="playground_lmsStepSize_val"></span></label>
+    <label>Leakage <input type="range" id="playground_lmsLeakage" min="0.99" max="1" step="0.0001"> <span id="playground_lmsLeakage_val"></span></label>
+    <label>Min Delay <input type="range" id="playground_lmsMinDelayMs" min="0" max="200"> <span id="playground_lmsMinDelayMs_val"></span>ms</label>
+    <button id="playground_lmsReset">Reset filter</button>
+  </details>
+  <pre id="playground_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
+  <audio id="playground_music" src="clips/music1.mp3" loop controls></audio>
+  <audio id="playground_speech1" src="clips/speech1.mp3" loop controls></audio>
+  <audio id="playground_speech2" src="clips/speech2.mp3" loop controls></audio>
+  <audio id="playground_speech3" src="clips/speech3.wav" loop controls></audio>
   <hr/>
-  <canvas id="noAEC_renderTd"></canvas>
-  <canvas id="noAEC_micTd"></canvas>
+  <canvas id="playground_renderTd"></canvas>
+  <canvas id="playground_micTd"></canvas>
 </div>
 
 </div>

@@ -55,29 +55,233 @@ export async function stopCopyingMe(ctx) {
   };
 }
 
+/**
+ * AECEvaluator - Evaluates echo cancellation performance from recorded tracks.
+ *
+ * TEST PROCEDURE:
+ * ===============
+ * Run three separate recordings, one for each test type:
+ *
+ * 1. FAR-END ONLY (ERLE test) - ~10 seconds
+ *    - Play audio through speakers (far-end active)
+ *    - Stay silent (no near-end speech)
+ *    - Measures: ERLE, residual echo RMS, echo estimate correlation
+ *    - Good ERLE: > 10 dB, Excellent: > 20 dB
+ *
+ * 2. NEAR-END ONLY (Preservation test) - ~10 seconds
+ *    - Mute all far-end audio sources
+ *    - Speak into the microphone
+ *    - Measures: Near-end distortion (output should equal nearEnd)
+ *    - Good preservation: distortion < -30 dB
+ *
+ * 3. DOUBLE-TALK (Optional, subjective) - ~10 seconds
+ *    - Play audio through speakers AND speak simultaneously
+ *    - Measures: Approximate ERLE during double-talk (less reliable)
+ *    - Requires manual listening evaluation for quality
+ *
+ * REQUIRED TRACKS:
+ * - nearEnd.wav: Raw microphone input (contains echo + near-end speech)
+ * - farEnd.wav: Signal sent to speakers
+ * - output.wav: Echo-cancelled output
+ * - echo_estimate.wav: Estimated echo (optional, for correlation metric)
+ */
+class AECEvaluator {
+  constructor() {
+    this.tracks = null;
+    this.sampleRate = 48000;
+    this.frameSize = 2400; // 50ms frames at 48kHz
+  }
 
-export async function noAEC(ctx) {
-  await ctx.audioWorklet.addModule('js/noisy-processors/noisyFauxEC.js');
+  setLastTest(tracks, sampleRate) {
+    this.sampleRate = sampleRate;
+    this.frameSize = Math.floor(sampleRate * 0.05); // 50ms frames
+    this.tracks = {};
+    for (const [filename, samples] of tracks) {
+      const key = filename.replace('.wav', '');
+      this.tracks[key] = samples;
+    }
+    console.log('AECEvaluator: Loaded tracks:', Object.keys(this.tracks));
+  }
+
+  runEval = () => {
+    if (!this.tracks || !this.tracks.nearEnd || !this.tracks.output) {
+      console.error('AECEvaluator: Missing required tracks (nearEnd, output)');
+      return;
+    }
+
+    const results = {
+      erle: this._computeERLE(),
+      preservation: this._computePreservation(),
+      correlation: this._computeCorrelation(),
+    };
+
+    console.log('=== AEC Evaluation Results ===');
+    console.log(`ERLE (far-end only frames): ${results.erle.meanDb.toFixed(1)} dB`);
+    console.log(`  - Frames analyzed: ${results.erle.frameCount}`);
+    console.log(`  - Residual RMS: ${results.erle.residualRms.toFixed(4)}`);
+    console.log(`Preservation (near-end only frames): ${results.preservation.distortionDb.toFixed(1)} dB`);
+    console.log(`  - Frames analyzed: ${results.preservation.frameCount}`);
+    if (results.correlation !== null) {
+      console.log(`Echo estimate correlation: ${results.correlation.toFixed(3)}`);
+    }
+    console.log('==============================');
+
+    return results;
+  }
+
+  _rms(arr, start, len) {
+    let sum = 0;
+    for (let i = start; i < start + len && i < arr.length; i++) {
+      sum += arr[i] * arr[i];
+    }
+    return Math.sqrt(sum / len);
+  }
+
+  _computeERLE() {
+    // ERLE = 10 * log10(power(nearEnd) / power(output))
+    // Only valid for far-end-only frames (farEnd active, nearEnd mostly echo)
+    const { nearEnd, farEnd, output } = this.tracks;
+    const frameSize = this.frameSize;
+    const numFrames = Math.floor(Math.min(nearEnd.length, output.length, farEnd?.length || Infinity) / frameSize);
+
+    const farEndThreshold = 0.01;  // Far-end must be active
+    const erleValues = [];
+    let residualSum = 0;
+    let residualCount = 0;
+
+    for (let f = 0; f < numFrames; f++) {
+      const start = f * frameSize;
+      const farEndRms = farEnd ? this._rms(farEnd, start, frameSize) : 1;
+      const nearEndRms = this._rms(nearEnd, start, frameSize);
+      const outputRms = this._rms(output, start, frameSize);
+
+      // Only analyze frames where far-end is active
+      if (farEndRms > farEndThreshold && nearEndRms > 0.001 && outputRms > 0.0001) {
+        const erle = 10 * Math.log10(nearEndRms * nearEndRms / (outputRms * outputRms));
+        erleValues.push(erle);
+        residualSum += outputRms;
+        residualCount++;
+      }
+    }
+
+    const meanErle = erleValues.length > 0
+      ? erleValues.reduce((a, b) => a + b, 0) / erleValues.length
+      : 0;
+
+    return {
+      meanDb: meanErle,
+      frameCount: erleValues.length,
+      residualRms: residualCount > 0 ? residualSum / residualCount : 0,
+    };
+  }
+
+  _computePreservation() {
+    // Measures distortion when near-end only (far-end silent)
+    // Output should equal nearEnd; any difference is distortion
+    const { nearEnd, farEnd, output } = this.tracks;
+    const frameSize = this.frameSize;
+    const numFrames = Math.floor(Math.min(nearEnd.length, output.length) / frameSize);
+
+    const farEndThreshold = 0.005;  // Far-end should be silent
+    const nearEndThreshold = 0.01;  // Near-end should be active
+    let distortionPower = 0;
+    let signalPower = 0;
+    let frameCount = 0;
+
+    for (let f = 0; f < numFrames; f++) {
+      const start = f * frameSize;
+      const farEndRms = farEnd ? this._rms(farEnd, start, frameSize) : 0;
+      const nearEndRms = this._rms(nearEnd, start, frameSize);
+
+      // Only analyze frames where far-end is silent and near-end is active
+      if (farEndRms < farEndThreshold && nearEndRms > nearEndThreshold) {
+        for (let i = start; i < start + frameSize && i < nearEnd.length; i++) {
+          const diff = output[i] - nearEnd[i];
+          distortionPower += diff * diff;
+          signalPower += nearEnd[i] * nearEnd[i];
+        }
+        frameCount++;
+      }
+    }
+
+    const distortionDb = signalPower > 0
+      ? 10 * Math.log10(distortionPower / signalPower)
+      : -Infinity;
+
+    return {
+      distortionDb,
+      frameCount,
+    };
+  }
+
+  _computeCorrelation() {
+    // Correlation between echo estimate and nearEnd (during far-end active)
+    const { nearEnd, farEnd, echo_estimate } = this.tracks;
+    if (!echo_estimate) return null;
+
+    const len = Math.min(nearEnd.length, echo_estimate.length);
+    let sumXY = 0, sumX2 = 0, sumY2 = 0;
+    let count = 0;
+
+    // Only correlate during far-end active periods
+    const frameSize = this.frameSize;
+    for (let i = 0; i < len; i++) {
+      const frameStart = Math.floor(i / frameSize) * frameSize;
+      const farEndRms = farEnd ? this._rms(farEnd, frameStart, frameSize) : 1;
+
+      if (farEndRms > 0.01) {
+        sumXY += nearEnd[i] * echo_estimate[i];
+        sumX2 += nearEnd[i] * nearEnd[i];
+        sumY2 += echo_estimate[i] * echo_estimate[i];
+        count++;
+      }
+    }
+
+    const denom = Math.sqrt(sumX2 * sumY2);
+    return denom > 0 ? sumXY / denom : 0;
+  }
+}
+
+// Worklets that need to be loaded before slide demos run
+export const workletsToLoad = [
+  'js/noisy-processors/noisyFauxEC.js',
+];
+
+async function mkFauxECDemo(ctx, prefix, opts = {}) {
+  // opts.strategies: array of strategy names to enable (e.g., ['halfDuplex', 'rir', 'nlms'])
+  // If not provided, all strategies are enabled
+  const enabledStrategies = opts.strategies || ['halfDuplex', 'timeAligned', 'rir', 'nlms'];
+  const hasStrategy = (name) => enabledStrategies.includes(name);
+  // Helper to get element by prefixed id
+  const p$ = (name) => document.getElementById(`${prefix}_${name}`);
+  // Helper to get value from optional config control
+  const pv = (name, defaultVal = 0) => {
+    const el = p$(name);
+    return el ? (typeof defaultVal === 'string' ? el.value : Number(el.value)) : defaultVal;
+  };
 
   const masterBus = ctx.createGain();
   masterBus.connect(ctx.destination);
-  const renderTD = canvas.mkEnvelopePlot('noAEC_renderTd', ctx);
+  const renderTD = canvas.mkEnvelopePlot(`${prefix}_renderTd`, ctx);
   renderTD.connectInput(masterBus);
 
-  // Graph 1: connect a few sources to render, to simulate far end
+  const perfEval = new AECEvaluator();
+
+  // Graph 1: connect audio sources to render (far end)
   const farEndGain = ctx.createGain();
   farEndGain.gain.setValueAtTime(1, ctx.currentTime);
   farEndGain.connect(masterBus);
-  ctx.createMediaElementSource(m$('noAEC_music')).connect(farEndGain);
-  ctx.createMediaElementSource(m$('noAEC_speech1')).connect(farEndGain);
-  ctx.createMediaElementSource(m$('noAEC_speech2')).connect(farEndGain);
-  ctx.createMediaElementSource(m$('noAEC_speech3')).connect(farEndGain);
+  ctx.createMediaElementSource(p$('music')).connect(farEndGain);
+  ctx.createMediaElementSource(p$('speech1')).connect(farEndGain);
+  ctx.createMediaElementSource(p$('speech2')).connect(farEndGain);
+  ctx.createMediaElementSource(p$('speech3')).connect(farEndGain);
 
   // Graph 2: connect mic input, to capture near end and play it back later
   let mic = null;
   const micGain = ctx.createGain();
   const recorder = noisy.mkRecorder(ctx);
-  const micTD = canvas.mkEnvelopePlot('noAEC_micTd', ctx);
+  const micTD = canvas.mkEnvelopePlot(`${prefix}_micTd`, ctx);
+
   const fauxECNode = new AudioWorkletNode(ctx, 'noisy-faux-ec', {
     numberOfInputs: 2,
     numberOfOutputs: 2,
@@ -88,176 +292,210 @@ export async function noAEC(ctx) {
   fauxECNode.connect(masterBus, 1);      // out port 1 -> speaker, used if the EC needs to override output
   recorder.connectInput(micGain);
   micTD.connectInput(micGain);
-  // Loop back recorder output to speaker, so user can hear recroding
+  // Loop back recorder output to speaker, so user can hear recording
   recorder.getOutput().connect(masterBus);
 
-  // Config setup
+  // Config control definitions [suffix, configKey] - value display element is always ${suffix}_val
   const halfduplexCtrls = [
-    ['noAEC_attackMs', 'noAEC_attackMs_val', 'attackMs'],
-    ['noAEC_decayMs', 'noAEC_decayMs_val', 'decayMs'],
-    ['noAEC_thresholdDb', 'noAEC_thresholdDb_val', 'thresholdDb'],
+    ['attackMs', 'attackMs'],
+    ['decayMs', 'decayMs'],
+    ['thresholdDb', 'thresholdDb'],
   ];
   const timealignerCtrls = [
-    ['noAEC_taMinDelayMs', 'noAEC_taMinDelayMs_val', 'minDelayMs'],
-    ['noAEC_taUpdateIntervalFrames', 'noAEC_taUpdateIntervalFrames_val', 'updateIntervalFrames'],
-    ['noAEC_taEchoTimeWindowSizeMs', 'noAEC_taEchoTimeWindowSizeMs_val', 'echoTimeWindowSizeMs'],
-    ['noAEC_taStepSize', 'noAEC_taStepSize_val', 'stepSize'],
-    ['noAEC_taTxThresholdDb', 'noAEC_taTxThresholdDb_val', 'txThresholdDb'],
-    ['noAEC_taRxThresholdDb', 'noAEC_taRxThresholdDb_val', 'rxThresholdDb'],
-    ['noAEC_taSmoothingAlpha', 'noAEC_taSmoothingAlpha_val', 'smoothingAlpha'],
-    ['noAEC_taNccThreshold', 'noAEC_taNccThreshold_val', 'nxcThreshold'],
-    ['noAEC_taXcorrWindowSize', 'noAEC_taXcorrWindowSize_val', 'xcorrWindowSize'],
-    ['noAEC_taEchoAttenuation', 'noAEC_taEchoAttenuation_val', 'echoAttenuation'],
+    ['taMinDelayMs', 'minDelayMs'],
+    ['taUpdateIntervalFrames', 'updateIntervalFrames'],
+    ['taEchoTimeWindowSizeMs', 'echoTimeWindowSizeMs'],
+    ['taStepSize', 'stepSize'],
+    ['taTxThresholdDb', 'txThresholdDb'],
+    ['taRxThresholdDb', 'rxThresholdDb'],
+    ['taSmoothingAlpha', 'smoothingAlpha'],
+    ['taNccThreshold', 'nxcThreshold'],
+    ['taXcorrWindowSize', 'xcorrWindowSize'],
+    ['taEchoAttenuation', 'echoAttenuation'],
   ];
   const rirCtrls = [
-    ['noAEC_rirIrLength', 'noAEC_rirIrLength_val', 'irLength'],
-    ['noAEC_rirMeasurementDurationMs', 'noAEC_rirMeasurementDurationMs_val', 'measurementDurationMs'],
-    ['noAEC_rirTestSignalType', null, 'testSignalType'],
-    ['noAEC_rirDiracPulseWidth', 'noAEC_rirDiracPulseWidth_val', 'diracPulseWidth'],
-    ['noAEC_rirMlsOrder', 'noAEC_rirMlsOrder_val', 'mlsOrder'],
-    ['noAEC_rirEchoAttenuation', 'noAEC_rirEchoAttenuation_val', 'echoAttenuation'],
+    ['rirIrLength', 'irLength'],
+    ['rirMeasurementDurationMs', 'measurementDurationMs'],
+    ['rirTestSignalType', 'testSignalType'],
+    ['rirDiracPulseWidth', 'diracPulseWidth'],
+    ['rirMlsOrder', 'mlsOrder'],
+    ['rirEchoAttenuation', 'echoAttenuation'],
   ];
+  const lmsCtrls = [
+    ['lmsFilterLength', 'filterLength'],
+    ['lmsStepSize', 'stepSize'],
+    ['lmsLeakage', 'leakage'],
+    ['lmsMinDelayMs', 'minDelayMs'],
+  ];
+
   const formatIrLength = (samples) => {
     const ms = Math.round(samples / ctx.sampleRate * 1000);
     return `${samples} samples/${ms}ms`;
   };
 
   const updateAECCfgs = () => {
-    // Configure everything that's configurable. Wasteful, but simpler
-    fauxECNode.port.postMessage({ type: 'setMode', value: m$('noAEC_mode').value });
-    fauxECNode.port.postMessage({
-      type: 'timeAligned_config',
-      value: {
-        minDelayMs: Number(m$('noAEC_taMinDelayMs').value),
-        updateIntervalFrames: Number(m$('noAEC_taUpdateIntervalFrames').value),
-        echoTimeWindowSizeMs: Number(m$('noAEC_taEchoTimeWindowSizeMs').value),
-        stepSize: Number(m$('noAEC_taStepSize').value),
-        txThresholdDb: Number(m$('noAEC_taTxThresholdDb').value),
-        rxThresholdDb: Number(m$('noAEC_taRxThresholdDb').value),
-        smoothingAlpha: Number(m$('noAEC_taSmoothingAlpha').value),
-        nxcThreshold: Number(m$('noAEC_taNccThreshold').value),
-        xcorrWindowSize: Number(m$('noAEC_taXcorrWindowSize').value),
-        echoAttenuation: Number(m$('noAEC_taEchoAttenuation').value),
-      },
-    });
-    fauxECNode.port.postMessage({
-      type: 'halfDuplex_config',
-      value: {
-        attackMs: Number(m$('noAEC_attackMs').value),
-        decayMs: Number(m$('noAEC_decayMs').value),
-        thresholdDb: Number(m$('noAEC_thresholdDb').value),
-      },
-    });
-    fauxECNode.port.postMessage({
-      type: 'rir_config',
-      value: {
-        irLength: Number(m$('noAEC_rirIrLength').value),
-        measurementDurationMs: Number(m$('noAEC_rirMeasurementDurationMs').value),
-        testSignalType: m$('noAEC_rirTestSignalType').value,
-        diracPulseWidth: Number(m$('noAEC_rirDiracPulseWidth').value),
-        mlsOrder: Number(m$('noAEC_rirMlsOrder').value),
-        echoAttenuation: Number(m$('noAEC_rirEchoAttenuation').value),
-      },
-    });
+    // Only send configs for enabled strategies
+    // If exactly one strategy, use it as the mode; otherwise read from dropdown
+    const mode = enabledStrategies.length === 1 ? enabledStrategies[0] : pv('mode', 'passthrough');
+    const cfg = { mode };
+    if (hasStrategy('timeAligned')) {
+      cfg.timeAligned = {
+        minDelayMs: pv('taMinDelayMs'),
+        updateIntervalFrames: pv('taUpdateIntervalFrames'),
+        echoTimeWindowSizeMs: pv('taEchoTimeWindowSizeMs'),
+        stepSize: pv('taStepSize'),
+        txThresholdDb: pv('taTxThresholdDb'),
+        rxThresholdDb: pv('taRxThresholdDb'),
+        smoothingAlpha: pv('taSmoothingAlpha'),
+        nxcThreshold: pv('taNccThreshold'),
+        xcorrWindowSize: pv('taXcorrWindowSize'),
+        echoAttenuation: pv('taEchoAttenuation'),
+      };
+    }
+    if (hasStrategy('halfDuplex')) {
+      cfg.halfDuplex = {
+        attackMs: pv('attackMs'),
+        decayMs: pv('decayMs'),
+        thresholdDb: pv('thresholdDb'),
+      };
+    }
+    if (hasStrategy('rir')) {
+      cfg.rir = {
+        irLength: pv('rirIrLength'),
+        measurementDurationMs: pv('rirMeasurementDurationMs'),
+        testSignalType: pv('rirTestSignalType', ''),
+        diracPulseWidth: pv('rirDiracPulseWidth'),
+        mlsOrder: pv('rirMlsOrder'),
+        echoAttenuation: pv('rirEchoAttenuation'),
+      };
+    }
+    if (hasStrategy('nlms')) {
+      cfg.nlms = {
+        filterLength: pv('lmsFilterLength'),
+        stepSize: pv('lmsStepSize'),
+        leakage: pv('lmsLeakage'),
+        minDelayMs: pv('lmsMinDelayMs'),
+      };
+    }
+    fauxECNode.port.postMessage({ type: 'setConfigs', value: cfg });
   };
 
-  // User interaction
-  m$('noAEC_play').addEventListener('click', () => {
+  // User interaction handlers (named for cleanup)
+  const playEl = p$('play');
+  const recEl = p$('rec');
+  const onPlayClick = () => {
     recorder.playToggle(
-      () => m$('noAEC_play').textContent = 'Stop',
-      () => m$('noAEC_play').textContent = 'Play',
+      () => playEl.textContent = 'Stop',
+      () => playEl.textContent = 'Play',
     );
-  });
-  m$('noAEC_rec').addEventListener('click', async () => {
+  };
+  const onRecClick = async () => {
     if (recorder.isRecording) {
       recorder.recordStop();
       mic && mic.disconnect();
       mic = null;
-      m$('noAEC_rec').textContent = 'Mic enable';
-      m$('noAEC_play').disabled = false;
+      recEl.textContent = 'Mic enable';
+      playEl.disabled = false;
     } else {
       mic = ctx.createMediaStreamSource(await noisy.getUserMic());
       mic.connect(fauxECNode);
       recorder.record();
-      m$('noAEC_rec').textContent = 'Mic disable';
-      m$('noAEC_play').disabled = true;
+      recEl.textContent = 'Mic disable';
+      playEl.disabled = true;
     }
-  });
+  };
+  const onLmsReset = () => fauxECNode.port.postMessage({ type: 'nlms_reset' });
+  const onRirMeasure = () => fauxECNode.port.postMessage({ type: 'rir_measure' });
 
-  // Config hooks
-  for (const [inputId, valId] of [['noAEC_mode'], ...halfduplexCtrls, ...timealignerCtrls, ...rirCtrls]) {
-    m$(inputId).addEventListener('input', (e) => {
-      if (valId && m$(valId)) {
-        if (inputId === 'noAEC_rirIrLength') {
-          m$(valId).textContent = formatIrLength(e.target.value);
-        } else {
-          m$(valId).textContent = e.target.value;
-        }
+  // Track listeners for cleanup
+  const listeners = [];
+  const addListener = (el, event, handler) => {
+    if (!el) return;
+    el.addEventListener(event, handler);
+    listeners.push({ el, event, handler });
+  };
+
+  addListener(playEl, 'click', onPlayClick);
+  addListener(recEl, 'click', onRecClick);
+  addListener(p$('lmsReset'), 'click', onLmsReset);
+  addListener(p$('triggerRIRMeasure'), 'click', onRirMeasure);
+
+  // Config hooks (for all controls that exist in DOM)
+  const allCtrls = [['mode'], ...halfduplexCtrls, ...timealignerCtrls, ...rirCtrls, ...lmsCtrls];
+  for (const [inputSuffix] of allCtrls) {
+    const el = p$(inputSuffix);
+    if (!el) continue;
+    const eventType = (el.tagName === 'BUTTON' || el.type === 'button') ? 'click' : 'input';
+    const handler = (e) => {
+      const valEl = p$(`${inputSuffix}_val`);
+      if (valEl) {
+        const useIrFormat = inputSuffix === 'rirIrLength' || inputSuffix === 'lmsFilterLength';
+        valEl.textContent = useIrFormat ? formatIrLength(e.target.value) : e.target.value;
       }
       updateAECCfgs();
-    });
+    };
+    addListener(el, eventType, handler);
   }
 
   // Request defaults from worklet and initialize UI
-  let aecCfgRcvd = 0;
+  const applyDefaults = (ctrls, defaults) => {
+    for (const [inputSuffix, cfgKey] of ctrls) {
+      const val = defaults[cfgKey];
+      if (val === undefined) continue;
+      const inputEl = p$(inputSuffix);
+      if (inputEl) inputEl.value = val;
+      const valEl = p$(`${inputSuffix}_val`);
+      if (valEl) {
+        const useIrFormat = inputSuffix === 'rirIrLength' || inputSuffix === 'lmsFilterLength';
+        valEl.textContent = useIrFormat ? formatIrLength(val) : val;
+      }
+    }
+  };
+
+  const gatedEl = p$('gated');
+  const statsEl = p$('stats');
+  const debugRecEl = p$('debugRec');
+
   fauxECNode.port.postMessage({ type: 'getDefaultConfigs' });
   fauxECNode.port.onmessage = (e) => {
     if (e.data.type === 'gated') {
-      m$('noAEC_gated').style.color = e.data.value ? 'red' : 'green';
+      if (gatedEl) gatedEl.style.color = e.data.value ? 'red' : 'green';
     } else if (e.data.type === 'stats') {
-      m$('noAEC_stats').textContent = JSON.stringify(e.data.value);
-    } else if (e.data.type === 'halfDuplexDefaults') {
-      const defaults = e.data.value;
-      for (const [inputId, valId, cfgKey] of halfduplexCtrls) {
-        const val = defaults[cfgKey];
-        m$(inputId).value = val;
-        m$(valId).textContent = val;
-      }
-      if (++aecCfgRcvd == 3) updateAECCfgs();
-    } else if (e.data.type === 'xCorrDefaults') {
-      const defaults = e.data.value;
-      for (const [inputId, valId, cfgKey] of timealignerCtrls) {
-        const val = defaults[cfgKey];
-        m$(inputId).value = val;
-        m$(valId).textContent = val;
-      }
-      if (++aecCfgRcvd == 3) updateAECCfgs();
-    } else if (e.data.type === 'rirDefaults') {
-      const defaults = e.data.value;
-      for (const [inputId, valId, cfgKey] of rirCtrls) {
-        const val = defaults[cfgKey];
-        m$(inputId).value = val;
-        if (valId) {
-          if (inputId === 'noAEC_rirIrLength') {
-            m$(valId).textContent = formatIrLength(val);
-          } else {
-            m$(valId).textContent = val;
-          }
-        }
-      }
-      if (++aecCfgRcvd == 3) updateAECCfgs();
+      if (statsEl) statsEl.textContent = JSON.stringify(e.data.value);
+    } else if (e.data.type === 'defaultConfigs') {
+      // Apply defaults to all elements that exist (applyDefaults skips missing elements)
+      const { halfDuplex, xCorr, rir, nlms } = e.data.value;
+      applyDefaults(halfduplexCtrls, halfDuplex);
+      applyDefaults(timealignerCtrls, xCorr);
+      applyDefaults(rirCtrls, rir);
+      applyDefaults(lmsCtrls, nlms);
+      updateAECCfgs();
     } else if (e.data.type === 'debugTracks') {
       const { tracks, sampleRate: sr } = e.data.value;
       if (!tracks) return;
+      perfEval.setLastTest(tracks, sr);
+      debugRecEl.disabled = false;
       for (const [filename, samples] of tracks) {
         noisy.floatToWavDownload(filename, samples, sr);
       }
-      m$('noAEC_debugRec').textContent = 'Debug tracks';
+      debugRecEl.textContent = 'Debug tracks';
     }
   };
 
   // Debug track recording
   let debugRecording = false;
-  m$('noAEC_debugRec').addEventListener('click', () => {
+  const onDebugRecClick = () => {
     if (debugRecording) {
       fauxECNode.port.postMessage({ type: 'stopDebugRecording' });
       debugRecording = false;
     } else {
       fauxECNode.port.postMessage({ type: 'startDebugRecording' });
-      m$('noAEC_debugRec').textContent = 'Stop & Download';
+      debugRecEl.textContent = 'Stop & Download';
       debugRecording = true;
     }
-  });
+  };
+  addListener(debugRecEl, 'click', onDebugRecClick);
+  addListener(p$('evalPerf'), 'click', perfEval.runEval);
 
   const statsInterval = setInterval(() => {
     fauxECNode.port.postMessage({ type: 'getStats' });
@@ -270,7 +508,35 @@ export async function noAEC(ctx) {
       mic && mic.disconnect();
       mic = null;
       fauxECNode.disconnect();
+
+      // Remove all event listeners
+      for (const { el, event, handler } of listeners) {
+        el.removeEventListener(event, handler);
+      }
     },
   };
+}
+
+export async function fauxecTutorial(ctx) {
+  // fauxecTutorial only uses basic modes (passthrough, silenceMic, testTone)
+  return mkFauxECDemo(ctx, 'fauxecTutorial', { strategies: [] });
+}
+export async function halfDuplex(ctx) {
+  return mkFauxECDemo(ctx, 'halfDuplex', { strategies: ['halfDuplex'] });
+}
+export async function naiveDiff(ctx) {
+  return mkFauxECDemo(ctx, 'naiveDiff', { strategies: ['naiveSubtract'] });
+}
+export async function timeAlignedDiff(ctx) {
+  return mkFauxECDemo(ctx, 'timeAlignedDiff', { strategies: ['timeAlignedSubtract'] });
+}
+export async function rir(ctx) {
+  return mkFauxECDemo(ctx, 'rir', { strategies: ['rir'] });
+}
+export async function lms(ctx) {
+  return mkFauxECDemo(ctx, 'lms', { strategies: ['lms'] });
+}
+export async function playground(ctx) {
+  return mkFauxECDemo(ctx, 'playground');
 }
 

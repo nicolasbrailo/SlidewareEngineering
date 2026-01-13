@@ -110,3 +110,29 @@ export async function newSlide(ctx) {
 
 Always use these helpers when creating new demos. Import them at the top of `slideDemos.js`.
 
+## Audio Processors
+
+### `js/noisy-processors/noisyFauxEC.js`
+
+AudioWorklet processor for faux echo cancellation demos. Has multiple strategies selectable via `setMode` message.
+
+**Strategies:**
+- `passthrough` - Passes mic input through unchanged
+- `silenceMic` - Outputs silence (mutes mic)
+- `testTone` - Adds 880Hz test tone to mic input
+- `naiveSubtract` - Subtracts far-end from near-end without delay compensation
+- `halfDuplex` - Gates mic when far-end signal exceeds threshold (configurable attack/decay/threshold)
+- `timeAlignedSubtract` - Subtracts far-end with cross-correlation based delay estimation
+
+**Configuration:**
+- Send `getDefaultConfigs` message to receive default configs for all strategies (returns `{halfDuplex, xCorr, rir, nlms}`)
+- Send `setConfigs` with `{mode, timeAligned, halfDuplex, rir, nlms}` to configure all strategies at once
+- Send `setMode` with strategy name to switch strategies
+- Send `nlms_reset` to reset the LMS filter coefficients
+- Send `rir_measure` to trigger a new RIR measurement
+
+**Classes:**
+- `XCorrHelper` - Cross-correlation delay estimator with configurable parameters
+- `HalfDuplexStrategy` - Level-based mic gating with attack/decay envelope
+- `TimeAlignedSubtractStrategy` - Uses XCorrHelper to find delay, then subtracts delayed far-end
+
