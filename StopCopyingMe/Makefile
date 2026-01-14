@@ -1,14 +1,30 @@
-# Speech https://salford.primo.exlibrisgroup.com/discovery/fulldisplay/alma9913412239501611/44SAL_INST:SAL_MAIN
-# Music https://incompetech.com/music/royalty-free/music.html
+.PHONY: clips
+clips: clips/music1.mp3 clips/music2.mp3 clips/speech1.mp3 clips/speech2.mp3 clips/speech3.mp3
+
 clips/music1.mp3:
-	mkdir -p clips
-	wget https://incompetech.com/music/royalty-free/mp3-royaltyfree/Funky%20Boxstep%20.mp3 -O clips/music1.mp3
+	# https://incompetech.com/music/royalty-free/music.html
+	wget -O clips/tmp.mp3 https://incompetech.com/music/royalty-free/mp3-royaltyfree/Funky%20Boxstep%20.mp3
+	ffmpeg -ss 90 -i clips/tmp.mp3 -t 60 -af "afade=t=in:st=0:d=1,afade=t=out:st=59:d=1" $@
+
+clips/music2.mp3:
+	# https://incompetech.com/music/royalty-free/music.html
+	wget -O clips/tmp.mp3 https://incompetech.com/music/royalty-free/mp3-royaltyfree/Grand%20Dark%20Waltz%20Trio%20Vivace.mp3
+	ffmpeg -ss 90 -i clips/tmp.mp3 -t 60 -af "afade=t=in:st=0:d=1,afade=t=out:st=59:d=1" $@
+
 clips/speech1.mp3:
-	# https://archive.org/details/tolkiens_thechildrenofhurin_audiobook_readby_sirchristopherlee/
-	wget -O $@ https://archive.org/download/tolkiens_thechildrenofhurin_audiobook_readby_sirchristopherlee/CHAPTER%203%20-%20THE%20WORDS%20OF%20H%C3%9ARIN%20AND%20MORGOTH%20.mp3
+	# https://archive.org/details/commonlaw_2011_librivox/commonlaw_08_holmes_128kb.mp3
+	wget -O clips/tmp.mp3 https://dn721907.ca.archive.org/0/items/commonlaw_2011_librivox/commonlaw_08_holmes_128kb.mp3
+	ffmpeg -ss 90 -i clips/tmp.mp3 -t 60 -af "afade=t=in:st=0:d=1,afade=t=out:st=59:d=1" $@
+
 clips/speech2.mp3:
-	# https://archive.org/details/TheHobbitAudiobook
-	wget -O $@ https://ia803100.us.archive.org/10/items/TheHobbitAudiobook/The%20Hobbit/Chapter%2003%20-%20A%20Short%20Rest.mp
+	# https://archive.org/details/antiseptic_principle_surgery_librivox
+	wget -O clips/tmp.mp3 https://ia804502.us.archive.org/6/items/antiseptic_principle_surgery_librivox/antisepticprinciple_lister_mac.mp3
+	ffmpeg -ss 90 -i clips/tmp.mp3 -t 60 -af "afade=t=in:st=0:d=1,afade=t=out:st=59:d=1" $@
+
+clips/speech3.mp3:
+	# https://archive.org/details/meteorology_weather_explained_1205b_librivox/meteorology_05_mcpherson.mp3
+	wget -O clips/tmp.mp3 https://ia801404.us.archive.org/11/items/meteorology_weather_explained_1205b_librivox/meteorology_05_mcpherson.mp3 
+	ffmpeg -ss 90 -i clips/tmp.mp3 -t 60 -af "afade=t=in:st=0:d=1,afade=t=out:st=59:d=1" clips/speech3.mp3
 
 .PHONY: run_server
 run_server:
