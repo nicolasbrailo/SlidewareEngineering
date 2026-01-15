@@ -868,21 +868,31 @@ class NLMSStrategy extends Strategy {
     // refined after the LMS filter has converged (but this adds complexity, which isn't great for my example)
     const minDelay = this.minDelaySamples;
 
+    // Compute initial xPower over the current buffer window (will be updated incrementally)
+    let xPower = 0;
+    for (let j = minDelay; j < len; j++) {
+      const xIdx = (this.xBufPos - j + len) % len;
+      xPower += xBuf[xIdx] * xBuf[xIdx];
+    }
+
     for (let i = 0; i < nSamples; i++) {
+      // Save the value we're about to overwrite (it's leaving the xPower window)
+      const leavingVal = xBuf[(this.xBufPos + 1) % len];
+
       // Write last farEnd to delay line, so we can use it later (the rest of the AEC strategy operates on the delayed
       // frame, so that nearEnd is "lined up" with the farEnd received $delay time in the past
       this.xBufPos = (this.xBufPos + 1) % len;
       xBuf[this.xBufPos] = farEndFrame[i];
 
+      // Get the value entering the xPower window and update incrementally
+      const enteringVal = xBuf[(this.xBufPos - minDelay + len) % len];
+      xPower = xPower - leavingVal * leavingVal + enteringVal * enteringVal;
+
       // Compute estimated echo: y_hat = h * x (convolution)
-      // input power for normalization (otherwise big input signal => big correction, small signal => small correction)
       let yHat = 0;
-      let xPower = 0;
       for (let j = minDelay; j < len; j++) {
         const xIdx = (this.xBufPos - j + len) % len;
-        const xVal = xBuf[xIdx];
-        yHat += h[j] * xVal;
-        xPower += xVal * xVal;
+        yHat += h[j] * xBuf[xIdx];
       }
 
       // Error = nearEnd  - estimatedEcho. If we assume no near end talk, then `micSignal - expectedEcho = 0`, and any non-zero
@@ -894,6 +904,7 @@ class NLMSStrategy extends Strategy {
       if (xPower < eps) {
         // farEndDelay had no signal at this tap length, so there is no point in updating the error (we'd just be using noise
         // as an error estimate)
+        console.log(xPower)
         continue;
       }
 
