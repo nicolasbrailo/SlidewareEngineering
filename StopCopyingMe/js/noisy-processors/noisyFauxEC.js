@@ -803,7 +803,7 @@ class NLMSStrategy extends Strategy {
       filterLength: 4096,       // Number of taps (~85ms at 48kHz)
       stepSize: 0.5,            // NLMS step size (mu), 0.1-1.0 typical
       epsilon: 1e-8,            // Regularization to prevent division by zero
-      leakage: 0.9999,          // Leaky LMS coefficient (1.0 = no leakage)
+      leakage: 0.9999,      // Leaky LMS coefficient (1.0 = no leakage, this gives ~10s half-life at 48kHz)
       minDelayMs: 50,           // Minimum expected delay (skip early taps)
     };
   }
@@ -913,16 +913,22 @@ class NLMSStrategy extends Strategy {
       const normFactor = mu / xPower;
       for (let j = minDelay; j < len; j++) {
         const xIdx = (this.xBufPos - j + len) % len;
-        // Leaky LMS: values slowly decay, so that (1) taps without any echo path slowly converge to zero, even if they become
-        // updated (eg by random noise). This prevents an error from persisting forever if there is no echo path at this tap
-        // delay. (2) Decay to zero parts of the filter that are "unused" (eg if farEnd consists of a signal that doesn't consistently
-        // update all the taps, for example a tone with a single frequency, then the filter will learn the transfer function in the
-        // system for that frequency, and will never update others. Leakage will make the filter "prefer" solutions where these filters
-        // are zero.
-        h[j] = leakage * h[j] + normFactor * error * xBuf[xIdx];
+        h[j] = h[j] + normFactor * error * xBuf[xIdx];
       }
 
       this.filterUpdates++;
+    }
+
+    // Apply leakage once per frame instead of per-sample (same effect, fewer operations)
+    // Leaky LMS: values slowly decay, so that (1) taps without any echo path slowly converge to zero, even if they become
+    // updated (eg by random noise). This prevents an error from persisting forever if there is no echo path at this tap
+    // delay. (2) Decay to zero parts of the filter that are "unused" (eg if farEnd consists of a signal that doesn't consistently
+    // update all the taps, for example a tone with a single frequency, then the filter will learn the transfer function in the
+    // system for that frequency, and will never update others. Leakage will make the filter "prefer" solutions where these filters
+    // are zero.
+    const batchLeakage = Math.pow(leakage, nSamples);
+    for (let j = minDelay; j < len; j++) {
+      h[j] *= batchLeakage;
     }
 
     // Update stats periodically (find peak coefficient)
