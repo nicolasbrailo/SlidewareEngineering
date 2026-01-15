@@ -289,7 +289,11 @@ class NLMSFilterPlot {
     plot.drawText('minDelay', minDelayMs, this.yMax * 0.9, '#c00', 5, 0);
 
     // Convert coefficients to [x, y] points (x in ms)
-    const points = coefficients.map((val, i) => [(i / sampleRate) * 1000, val]);
+    // Use for loop instead of .map() because Float32Array.map returns Float32Array, not Array
+    const points = [];
+    for (let i = 0; i < coefficients.length; i++) {
+      points.push([(i / sampleRate) * 1000, coefficients[i]]);
+    }
     plot.drawLine(points, '#00c', 1);
   }
 }
@@ -554,7 +558,7 @@ async function mkFauxECDemo(ctx, prefix, opts = {}) {
   // Auto-update NLMS filter plot if canvas exists
   const filterInterval = nlmsFilterPlot.canvas ? setInterval(() => {
     fauxECNode.port.postMessage({ type: 'nlms_exportFilter' });
-  }, 500) : null;
+  }, 100) : null;
 
   return {
     cleanup: async () => {

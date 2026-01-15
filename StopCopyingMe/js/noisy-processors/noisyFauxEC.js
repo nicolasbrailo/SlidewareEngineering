@@ -1049,15 +1049,17 @@ class NoisyFauxECProcessor extends AudioWorkletProcessor {
         this.strategies.lms.onMessage('nlms_reset', value);
       } else if (type === 'nlms_exportFilter') {
         const lmsStrategy = this.strategies.lms;
+        // Copy to a new Float32Array and transfer it (zero-copy across threads)
+        const coefficients = new Float32Array(lmsStrategy.h);
         this.port.postMessage({
           type: 'nlms_filter',
           value: {
-            coefficients: Array.from(lmsStrategy.h),
+            coefficients: coefficients,
             filterLength: lmsStrategy.config.filterLength,
             minDelaySamples: lmsStrategy.minDelaySamples,
             sampleRate: sampleRate,
           },
-        });
+        }, [coefficients.buffer]);
       } else if (type === 'rir_measure') {
         this.strategies.rir.onSelected();
       }
