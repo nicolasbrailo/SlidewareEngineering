@@ -9,6 +9,7 @@ All directories here are presentations I've prepared at random points in my care
 * [WhatTheAudio](WhatTheAudio): simple audio demos to understand basics of audio DSP.
 * [AirToArrays](AirToArrays): somewhat more in depth set of demos to show how audio DSP works, and how humans hear.
 * [YellingIntoTheVoIP](YellingIntoTheVoIP): a high level, but comprehensive in breadth, overview of VoIP systems, from mic capture, to transport and render.
+* [StopCopyingMe](StopCopyingMe): a more in-depth explanation/demos of how echo cancellation works for telephony.
 * [00_js_slides_template](00_js_slides_template): the template I use for impress.js presentations, in various states of disrepair.
 
 While the repo has many more, most are 10+ years old and likely to be so out of date that are not worth linking. I only keep them because no one charges me per megabyte.

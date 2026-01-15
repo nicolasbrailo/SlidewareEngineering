@@ -496,3 +496,30 @@ select {
 #impress-toolbar select {
   font-size: 50%;
 }
+
+.blink { animation: blink 1s step-start infinite; color: red; }
+@keyframes blink { 50% { opacity: 0; }}
+
+.rainbow {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    violet
+  );
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0%; }
+  100% { background-position: 100%; }
+}
