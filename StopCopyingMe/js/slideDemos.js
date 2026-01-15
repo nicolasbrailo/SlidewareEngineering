@@ -247,6 +247,53 @@ export const workletsToLoad = [
   'js/noisy-processors/noisyFauxEC.js',
 ];
 
+/**
+ * Helper class for plotting NLMS filter coefficients with expanding y-axis range.
+ * The y-axis expands to fit data but never contracts.
+ */
+class NLMSFilterPlot {
+  constructor(canvasElement) {
+    this.canvas = canvasElement;
+    this.yMax = 0.0001; // Initial small range
+  }
+
+  update(data) {
+    if (!this.canvas) return;
+    const { coefficients, filterLength, minDelaySamples, sampleRate } = data;
+
+    // Find max absolute value and expand yMax if needed (never shrink, cap at 1)
+    for (let i = 0; i < coefficients.length; i++) {
+      const absVal = Math.abs(coefficients[i]);
+      if (absVal > this.yMax) {
+        this.yMax = Math.min(absVal * 1.1, 1); // 10% padding, capped at 1
+      }
+    }
+
+    // X-axis in milliseconds
+    const maxTimeMs = (filterLength / sampleRate) * 1000;
+
+    const plot = canvas.mkPlot(this.canvas, {
+      padding: { top: 20, right: 20, bottom: 30, left: 50 },
+      xRange: [0, maxTimeMs],
+      yRange: [-this.yMax, this.yMax],
+    });
+
+    plot.drawAxes();
+    plot.drawXTicks(5, (v) => v.toFixed(0) + 'ms');
+    plot.drawYTicks(5, (v) => v.toFixed(4));
+    plot.drawHLine(0, '#888', true);
+
+    // Draw vertical line at minDelay
+    const minDelayMs = (minDelaySamples / sampleRate) * 1000;
+    plot.drawVLine(minDelayMs, '#c00', true);
+    plot.drawText('minDelay', minDelayMs, this.yMax * 0.9, '#c00', 5, 0);
+
+    // Convert coefficients to [x, y] points (x in ms)
+    const points = coefficients.map((val, i) => [(i / sampleRate) * 1000, val]);
+    plot.drawLine(points, '#00c', 1);
+  }
+}
+
 async function mkFauxECDemo(ctx, prefix, opts = {}) {
   // opts.strategies: array of strategy names to enable (e.g., ['halfDuplex', 'rir', 'nlms'])
   // If not provided, all strategies are enabled
@@ -455,6 +502,7 @@ async function mkFauxECDemo(ctx, prefix, opts = {}) {
   const gatedEl = p$('gated');
   const statsEl = p$('stats');
   const debugRecEl = p$('debugRec');
+  const nlmsFilterPlot = new NLMSFilterPlot(p$('nlms_filter'));
 
   fauxECNode.port.postMessage({ type: 'getDefaultConfigs' });
   fauxECNode.port.onmessage = (e) => {
@@ -470,6 +518,8 @@ async function mkFauxECDemo(ctx, prefix, opts = {}) {
       applyDefaults(rirCtrls, rir);
       applyDefaults(lmsCtrls, nlms);
       updateAECCfgs();
+    } else if (e.data.type === 'nlms_filter') {
+      nlmsFilterPlot.update(e.data.value);
     } else if (e.data.type === 'debugTracks') {
       const { tracks, sampleRate: sr } = e.data.value;
       if (!tracks) return;
@@ -501,9 +551,15 @@ async function mkFauxECDemo(ctx, prefix, opts = {}) {
     fauxECNode.port.postMessage({ type: 'getStats' });
   }, 500);
 
+  // Auto-update NLMS filter plot if canvas exists
+  const filterInterval = nlmsFilterPlot.canvas ? setInterval(() => {
+    fauxECNode.port.postMessage({ type: 'nlms_exportFilter' });
+  }, 500) : null;
+
   return {
     cleanup: async () => {
       clearInterval(statsInterval);
+      if (filterInterval) clearInterval(filterInterval);
       recorder.recordStop();
       mic && mic.disconnect();
       mic = null;
