@@ -76,7 +76,16 @@ h5 { font-size: 40%; }
   <details>
     <summary>Echo explorer</summary>
     <ul>
-      <li></li>
+      <li>Humans can't deal with echo. Hearing ourselves talk breaks our frail concentration, and we just can't speak anymore.</li>
+      <li>The difference between self-feedback, reverb and echo are to a large extent psychoacoustic phenomena: <ul>
+          <li>You hear yourself, all the time. This, hopefully, doesn't confuse you. It's what we use to modulate the volume of our voices. The time delay for self-feedback is less than 5 ms</li>
+          <li>Beyond 5ms: we don't percive echo, we percieve our own voice as reverb. This is also normal for us: there is always reverb, and we don't notice</li>
+          <li>Beyond 40/50ms: we stop perceiving a single acustic event. We start perceiving two distinct events (self-feedback+reverb, then echo). This is the one we can't deal with</li></ul>
+      <li>We can't demo the difference between self-feedback, reverb and echo because this demo can't reach latencies that low, but you can still understand how echo impacts your speech.
+          Try to read this text aloud while echo is active:</li>
+      <li>Start the demo with "Start". Tweak the delay and the attenuation. You can build an intuitive sense of how annoying echo is, if you didn't already know,
+          and you can also see how much attenuation you need before echo stops being a problem</li>
+      <li>The rest of the demos here work in a similar way to this one, but are a bit more complicated</li>
     </ul>
   </details>
   <button id="stopCopyingMe_demoToggle">Start</button>
@@ -89,6 +98,24 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="fauxecTutorial">
+  <details>
+    <summary>AEC demos</summary>
+    <ul>
+      <li>The different demos present ways to solve the echo problem in a telephony system (how to avoid the speaker from being picked up by your mic).</li>
+      <li>There are different audio samples with music or speech that you can use to test the AEC algorithm: playing something simulates echo from a far-end peer. The goal of this demo
+          is that you should enable a loudspeaker, together with the mic, and see how well each algorithm can remove the speaker audio from the mic in the output</li>
+      <li>The algorithm being tested will start receiving mic data once you click "Mic enable"</li>
+      <li>Disabling the mic will enable the "Play" button. This will play back the output of the echo canceller while the mic was enabled. Clicking "Mic enable" will restart the recording.</li>
+      <li>Debug tracks will start a recording of the AEC input, output and state. Once you stop the debug tracks, they will be downloaded as wav files that can be imported in audacity</li>
+      <li>As part of the download, you will see a file containing raw near-end (mic) audio, raw far-end (speaker) audio, and AEC output (the processed near-end audio)</li>
+      <li>Some AEC implementations may include other files, such as an echo estimate (the echo that the strategy THINKS should be present in the mic). This will let you understand the
+          internal state of the algorithm</li>
+      <li>Eval perf will print echo metrics to the browser's console (//TODO add a stats overlay)</li>
+      <li>There are two plots: the left one shows the level of the audio in the speakers. The right one is the mic</li>
+      <li>The text with a lot of numbers: stats of the algorithm. They make sense only when reading the code.</li>
+      <li>You can use the "passthrough" mode to understand the natural attenuation from the acoustic path</li>
+    </ul>
+  </details>
   <button id="fauxecTutorial_rec">Mic enable</button>
   <button id="fauxecTutorial_play" disabled>Play</button>
   <button id="fauxecTutorial_debugRec">Debug tracks</button>
@@ -109,6 +136,19 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="halfDuplex">
+  <details>
+    <summary>Half duplex</summary>
+    <ul>
+      <li>A naive strategy for echo removal: we can disable the mic every time there is active far end audio.</li>
+      <li>This is what early speakerphones did!</li>
+      <li>Play with the sliders to see how hard it is to find a good setting: a release that's too short will result in few opportunities to "talk"
+        (eg missing the first few words of a sentence when trying to reply). Too short, and the results will be bursty and noisy</li>
+      <li>Play with different voices and content to see how hard it is to find a GLOBAL setting. What works for music, will break for speech. Even for different speakers,
+          the attack/release parameters may have different set points</li>
+      <li>The quality of communication is horrible. Half-duplex is very far from a natural conversation flow. Phonemes are 30 to 50 ms long, and humans frequently speak
+          over one another to signal intent to speak or emotions such as agreeing or disagreeing. This is caused by humans' poor design, lacking an efficient off-band signalling system.</li>
+    </ul>
+  </details>
   <button id="halfDuplex_rec">Mic enable</button>
   <button id="halfDuplex_play" disabled>Play</button>
   <button id="halfDuplex_debugRec">Debug tracks</button>
@@ -131,6 +171,19 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="naiveDiff">
+  <details>
+    <summary>Naive substract</summary>
+    <ul>
+      <li>This "AEC" implementation substracts the far-end signal from the raw mic signal.</li>
+      <li>Unsurprisingly, it doesn't work. It probably sounds like a copy of the far-end signal. At best, you may get a comb-like effect.</li>
+      <li>A naive signal substraction doesn't account that it takes time for the audio from your speakers to reach your microphone.
+          This is due to the time it takes your system to output audio, the acoustic time-of-flight, and the time it takes your system
+          to capture the audio again.</li>
+      <li>A naive substraction will either result in two similar copies of the audio being sent, at best. If there is enough passive
+          attenuation (your speaker is far enough from your microphone) then this algorithm will probably just sound like the original
+          far-end audio.</li>
+    </ul>
+  </details>
   <button id="naiveDiff_rec">Mic enable</button>
   <button id="naiveDiff_play" disabled>Play</button>
   <button id="naiveDiff_debugRec">Debug tracks</button>
@@ -146,6 +199,33 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="timeAlignedDiff">
+  <details>
+    <summary>Time-aligned substract</summary>
+    <ul>
+      <li>This implementation will calculate the loopback time (how long it takes sound from your speaker to reach the microphone). This is a dynamic number, and
+          it's influenced by the acoustic path (the distance from your mic to your speaker), as well as your system (how long it takes for audio to travel from the OS
+          to the real world)</li>
+      <li>The time delay is calculated using cross correlation.
+        <details><summary>You can change the xcorr config to see how it impacts processing time and accuracy.</summary>
+        <ul>
+          <li>Min delay is the minimum assumed delay. Making this shorter shouldn't affect audio, but it will: the xcorr algo will have to learn the minimum delay, using a lot of compute.</li>
+          <li>Update interval: how often xcorr should run. Smaller: quicker adaptation to acoustic environment changes</li>
+          <li>Echo window: the maximum tail of the echo. Together with min delay, can be used to reduce compute (reducing too much means losing echo tails).</li>
+          <li>Step size: how precise the xcorr should be. Xcorr implementation uses coarse and fine search, this controls only coarse search.
+              If step size is too large, we can miss first peak of correlation. If it's too small, we can't compute this on real time.</li>
+          <li>TX/RX threshold: rejects xcorr updates if there is no TX or RX signal</li>
+          <li>Smoothing: smoothing factor for time delay. The algorithm can be prone to jumps without any.</li>
+          <li>NCC Threshold: minimum threshold to consider the normalized xcorr matching. Below threshold, the algorithm assumes the signals are uncorrelated</li>
+          <li>XCorr window: a longer window can make up for a shorter minimum delay, at the cost of compute. If the window is too short, we won't find a correlation between
+            near end and far end signals.</li>
+          <li>Echo attenuation: a gain for the echo path (this is unlikely to be 1: the microphone will have some gain over the speaker signal)</li>
+        </ul></details></li>
+        <li>Here, the reverb/comb effect is greatly reduced (not entirely, as the time alignment isn't perfect)</li>
+        <li>But it does very little for the echo: the room coloration means the two signals are different enough that substracting them
+          does nothing to remove echo. Plus, it's hard to get the attenuation right (we end up just changing the phase slightly)</li>
+        <li>Time-alignment is necessary but not sufficient. We will need to model the path between speaker and microphone</li>
+    </ul>
+  </details>
   <button id="timeAlignedDiff_rec">Mic enable</button>
   <button id="timeAlignedDiff_play" disabled>Play</button>
   <button id="timeAlignedDiff_debugRec">Debug tracks</button>
@@ -175,6 +255,18 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="rir">
+    <!--
+      Notes
+      - Room impulse response:
+        - Measuring RIR is disruptive
+        - Note how the IR lenght needs to be longer than the echo tail, otherwise results are garbage
+        - If the IR changes (people move around) then the IR needs to be recalculated
+        - Playing with the echo attenuation let's us over/under attenuate, as the RIR isn't entirely precise. It's almost impossible
+          to get a good value, there is a lot of residual echo.
+        - Demo is SUPER hard to get right: the latency changes dynamically, and even a millisecond of difference breaks the AEC. It's likely
+          that taking a few RIR measurements is needed before this demo work.
+        - Parameters need to be tuned for each setup, especially echo attenuation.
+    -->
   <button id="rir_rec">Mic enable</button>
   <button id="rir_play" disabled>Play</button>
   <button id="rir_debugRec">Debug tracks</button>
@@ -235,24 +327,6 @@ h5 { font-size: 40%; }
   <button id="playground_debugRec">Debug tracks</button>
   <button id="playground_evalPerf" disable>Eval Perf</button>
   <select id="playground_mode">
-    <!--
-      Notes
-      - Passthrough: easier to see natural attenuation
-      - Half duplex: play with the sliders to see how hard it is to find a good setting. Play with different voices to see how hard it is to find
-        a GLOBAL setting. Also, the quality of communication is horrible.
-      - Timealigned substract, the reverb/comb effect is greatly reduced (not entirely, as the time alignment isn't perfect)
-        but it does very little for the echo: the room coloration means the two signals are different enough that substracting them
-        does little to remove the echo, plus it's hard to get the attenuation right (we end up just changing the phase slightly)
-      - Room impulse response:
-        - Measuring RIR is disruptive
-        - Note how the IR lenght needs to be longer than the echo tail, otherwise results are garbage
-        - If the IR changes (people move around) then the IR needs to be recalculated
-        - Playing with the echo attenuation let's us over/under attenuate, as the RIR isn't entirely precise. It's almost impossible
-          to get a good value, there is a lot of residual echo.
-        - Demo is SUPER hard to get right: the latency changes dynamically, and even a millisecond of difference breaks the AEC. It's likely
-          that taking a few RIR measurements is needed before this demo work.
-        - Parameters need to be tuned for each setup, especially echo attenuation.
-    -->
     <option value="passthrough">Passthrough</option>
     <option value="silenceMic">Silence mic</option>
     <option value="testTone">Test Tone</option>
