@@ -40,7 +40,7 @@ h5 { font-size: 40%; }
 <div class="step slide" id="aecs" data-x="0" data-y="1920">
   <h1><img src="img/favicon.png" />Echo explorer</h1>
   <h2>Echo</h2>
-  <h3>Echo</h4>
+  <h3>Echo</h3>
   <h4>Echo</h4>
   <h5>Echo</h5>
 
@@ -72,15 +72,15 @@ h5 { font-size: 40%; }
 
 
 <div class="step slide" id="stopCopyingMe">
-  <h2>Stopy copying me</h2>
+  <h2>Stop copying me</h2>
   <details>
     <summary>Echo explorer</summary>
     <ul>
       <li>Humans can't deal with echo. Hearing ourselves talk breaks our frail concentration, and we just can't speak anymore.</li>
       <li>The difference between self-feedback, reverb and echo are to a large extent psychoacoustic phenomena: <ul>
           <li>You hear yourself, all the time. This, hopefully, doesn't confuse you. It's what we use to modulate the volume of our voices. The time delay for self-feedback is less than 5 ms</li>
-          <li>Beyond 5ms: we don't percive echo, we percieve our own voice as reverb. This is also normal for us: there is always reverb, and we don't notice</li>
-          <li>Beyond 40/50ms: we stop perceiving a single acustic event. We start perceiving two distinct events (self-feedback+reverb, then echo). This is the one we can't deal with</li></ul>
+          <li>Beyond 10ms: we don't perceive echo, we perceive our own voice as reverb. This is also normal for us: there is always reverb, and we don't notice</li>
+          <li>Beyond 40/50ms: we stop perceiving a single acoustic event. We start perceiving two distinct events (self-feedback+reverb, then echo). This is the one we can't deal with</li></ul>
       <li>We can't demo the difference between self-feedback, reverb and echo because this demo can't reach latencies that low, but you can still understand how echo impacts your speech.
           Try to read this text aloud while echo is active:</li>
       <li>Start the demo with "Start". Tweak the delay and the attenuation. You can build an intuitive sense of how annoying echo is, if you didn't already know,
@@ -119,7 +119,7 @@ h5 { font-size: 40%; }
   <button id="fauxecTutorial_rec">Mic enable</button>
   <button id="fauxecTutorial_play" disabled>Play</button>
   <button id="fauxecTutorial_debugRec">Debug tracks</button>
-  <button id="fauxecTutorial_evalPerf" disable>Eval Perf</button>
+  <button id="fauxecTutorial_evalPerf" disabled>Eval Perf</button>
   <select id="fauxecTutorial_mode">
     <option value="passthrough">Passthrough</option>
     <option value="silenceMic">Silence mic</option>
@@ -139,10 +139,10 @@ h5 { font-size: 40%; }
   <details>
     <summary>Half duplex</summary>
     <ul>
-      <li>A naive strategy for echo removal: we can disable the mic every time there is active far end audio.</li>
+      <li>A naive strategy for echo removal: we can disabled the mic every time there is active far end audio.</li>
       <li>This is what early speakerphones did!</li>
       <li>Play with the sliders to see how hard it is to find a good setting: a release that's too short will result in few opportunities to "talk"
-        (eg missing the first few words of a sentence when trying to reply). Too short, and the results will be bursty and noisy</li>
+        (eg missing the first few words of a sentence when trying to reply). Too long, and the results will be bursty and noisy</li>
       <li>Play with different voices and content to see how hard it is to find a GLOBAL setting. What works for music, will break for speech. Even for different speakers,
           the attack/release parameters may have different set points</li>
       <li>The quality of communication is horrible. Half-duplex is very far from a natural conversation flow. Phonemes are 30 to 50 ms long, and humans frequently speak
@@ -152,7 +152,7 @@ h5 { font-size: 40%; }
   <button id="halfDuplex_rec">Mic enable</button>
   <button id="halfDuplex_play" disabled>Play</button>
   <button id="halfDuplex_debugRec">Debug tracks</button>
-  <button id="halfDuplex_evalPerf" disable>Eval Perf</button>
+  <button id="halfDuplex_evalPerf" disabled>Eval Perf</button>
   <details>
     <summary>Half duplex config</summary>
     <label>Attack <input type="range" id="halfDuplex_attackMs" min="1" max="100"> <span id="halfDuplex_attackMs_val"></span>ms</label>
@@ -172,14 +172,14 @@ h5 { font-size: 40%; }
 
 <div class="step slide" id="naiveDiff">
   <details>
-    <summary>Naive substract</summary>
+    <summary>Naive subtract</summary>
     <ul>
-      <li>This "AEC" implementation substracts the far-end signal from the raw mic signal.</li>
+      <li>This "AEC" implementation subtracts the far-end signal from the raw mic signal.</li>
       <li>Unsurprisingly, it doesn't work. It probably sounds like a copy of the far-end signal. At best, you may get a comb-like effect.</li>
-      <li>A naive signal substraction doesn't account that it takes time for the audio from your speakers to reach your microphone.
+      <li>A naive signal subtraction doesn't account that it takes time for the audio from your speakers to reach your microphone.
           This is due to the time it takes your system to output audio, the acoustic time-of-flight, and the time it takes your system
           to capture the audio again.</li>
-      <li>A naive substraction will either result in two similar copies of the audio being sent, at best. If there is enough passive
+      <li>A naive subtraction will either result in two similar copies of the audio being sent, at best. If there is enough passive
           attenuation (your speaker is far enough from your microphone) then this algorithm will probably just sound like the original
           far-end audio.</li>
     </ul>
@@ -187,7 +187,7 @@ h5 { font-size: 40%; }
   <button id="naiveDiff_rec">Mic enable</button>
   <button id="naiveDiff_play" disabled>Play</button>
   <button id="naiveDiff_debugRec">Debug tracks</button>
-  <button id="naiveDiff_evalPerf" disable>Eval Perf</button>
+  <button id="naiveDiff_evalPerf" disabled>Eval Perf</button>
   <pre id="naiveDiff_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
   <audio id="naiveDiff_music" src="clips/music1.mp3" loop controls></audio>
   <audio id="naiveDiff_speech1" src="clips/speech1.mp3" loop controls></audio>
@@ -200,7 +200,7 @@ h5 { font-size: 40%; }
 
 <div class="step slide" id="timeAlignedDiff">
   <details>
-    <summary>Time-aligned substract</summary>
+    <summary>Time-aligned subtract</summary>
     <ul>
       <li>This implementation will calculate the loopback time (how long it takes sound from your speaker to reach the microphone). This is a dynamic number, and
           it's influenced by the acoustic path (the distance from your mic to your speaker), as well as your system (how long it takes for audio to travel from the OS
@@ -218,18 +218,18 @@ h5 { font-size: 40%; }
           <li>NCC Threshold: minimum threshold to consider the normalized xcorr matching. Below threshold, the algorithm assumes the signals are uncorrelated</li>
           <li>XCorr window: a longer window can make up for a shorter minimum delay, at the cost of compute. If the window is too short, we won't find a correlation between
             near end and far end signals.</li>
-          <li>Echo attenuation: a gain for the echo path (this is unlikely to be 1: the microphone will have some gain over the speaker signal)</li>
+          <li>Echo attenuation: a gain for the echo path (this is unlikely to be 1: the microphone will typically, but not always, be an less loude than the speaker signal)</li>
         </ul></details></li>
         <li>Here, the reverb/comb effect is greatly reduced (not entirely, as the time alignment isn't perfect)</li>
-        <li>But it does very little for the echo: the room coloration means the two signals are different enough that substracting them
+        <li>But it does very little for the echo: the room coloration means the two signals are different enough that subtracting them
           does nothing to remove echo. Plus, it's hard to get the attenuation right (we end up just changing the phase slightly)</li>
-        <li>Time-alignment is necessary but not sufficient. We will need to model the path between speaker and microphone</li>
+        <li>Time-alignment is necessary but not sufficient. We need to model the path between speaker and microphone</li>
     </ul>
   </details>
   <button id="timeAlignedDiff_rec">Mic enable</button>
   <button id="timeAlignedDiff_play" disabled>Play</button>
   <button id="timeAlignedDiff_debugRec">Debug tracks</button>
-  <button id="timeAlignedDiff_evalPerf" disable>Eval Perf</button>
+  <button id="timeAlignedDiff_evalPerf" disabled>Eval Perf</button>
   <details>
     <summary>Time aligner config</summary>
     <label>Min Delay <input type="range" id="timeAlignedDiff_taMinDelayMs" min="0" max="200"> <span id="timeAlignedDiff_taMinDelayMs_val"></span>ms</label>
@@ -255,22 +255,53 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="rir">
-    <!--
-      Notes
-      - Room impulse response:
-        - Measuring RIR is disruptive
-        - Note how the IR lenght needs to be longer than the echo tail, otherwise results are garbage
-        - If the IR changes (people move around) then the IR needs to be recalculated
-        - Playing with the echo attenuation let's us over/under attenuate, as the RIR isn't entirely precise. It's almost impossible
-          to get a good value, there is a lot of residual echo.
-        - Demo is SUPER hard to get right: the latency changes dynamically, and even a millisecond of difference breaks the AEC. It's likely
-          that taking a few RIR measurements is needed before this demo work.
-        - Parameters need to be tuned for each setup, especially echo attenuation.
-    -->
+  <details>
+    <summary>Room impulse response</summary>
+    <ul>
+      <li>Time-aligned subtraction fails because the room changes the signal: reflections, absorption, frequency-dependent attenuation.
+          Instead of just delaying the far-end signal, we can try to model the entire acoustic path. The Room Impulse Response (RIR)
+          captures how sound travels from speaker to microphone, including all the reflections and coloration.</li>
+      <li>To measure the RIR, we play a known test signal and record what the mic captures. Comparing the two gives us the room's
+          transfer function. We can then convolve the far-end audio with this RIR to predict what the echo should look like, and subtract it.</li>
+      <li>Sounds great in theory. In practice:
+        <ul>
+          <li>Measuring the RIR is disruptive: you need to play a loud test signal (a click, sweep, or noise burst). Not ideal mid-call.</li>
+          <li>The IR length needs to be longer than the echo tail. Too short, and the results are garbage.</li>
+          <li>The RIR changes when anything moves: people, chairs, doors. The measurement becomes stale quickly.</li>
+          <li>Even a millisecond of timing drift breaks the cancellation. The system latency changes dynamically, so
+              the RIR you measured may not match the current delay.</li>
+        </ul></li>
+      <li>This demo is hard to get right. You may need to take a few RIR measurements before it starts working.
+        <details><summary>RIR parameters explained</summary>
+        <ul>
+          <li>IR Length: the maximum echo length the filter can capture. Must be longer than your room's reverb tail,
+              otherwise the RIR gets truncated and cancellation fails. Longer = more compute, but too short = garbage results.</li>
+          <li>Measurement Duration: how long to play and record the test signal. Longer measurements give cleaner RIR estimates
+              (more averaging, better signal-to-noise), but are more disruptive.</li>
+          <li>Test Signal Type: the signal used to probe the room. Trade-off between disruption and accuracy:
+            <ul>
+              <li>Skip RIR: don't measure, just use a basic delay. Useful as a baseline.</li>
+              <li>Dirac (sine/square): a short impulse. Quick and less annoying, but lower SNR. The room response
+                  is literally the recorded signal. Square has more high-frequency content.</li>
+              <li>MLS (Maximum Length Sequence): pseudo-random noise that's mathematically designed for impulse response
+                  measurement. Sounds like white noise. More disruptive, but gives a much cleaner RIR estimate because
+                  cross-correlation with MLS rejects uncorrelated noise.</li>
+            </ul></li>
+          <li>Dirac Pulse Width: for Dirac signals, how wide the pulse is. Wider pulses have more energy (better SNR)
+              but less high-frequency content (blurrier time resolution).</li>
+          <li>MLS Order: the length of the MLS sequence (2^order - 1 samples). Higher order = longer sequence = better
+              noise rejection, but longer measurement time.</li>
+          <li>Echo Attenuation: gain applied to the predicted echo before subtraction. The RIR measurement is never perfect,
+              so you may need to tweak this. Too low = residual echo. Too high = artifacts and distortion.</li>
+        </ul></details></li>
+      <li>RIR-based AEC is a step in the right direction: we're finally modeling the room. But a static measurement
+          can't keep up with a dynamic environment. We need something that adapts continuously.</li>
+    </ul>
+  </details>
   <button id="rir_rec">Mic enable</button>
   <button id="rir_play" disabled>Play</button>
   <button id="rir_debugRec">Debug tracks</button>
-  <button id="rir_evalPerf" disable>Eval Perf</button>
+  <button id="rir_evalPerf" disabled>Eval Perf</button>
   <details>
     <summary>Room impulse response config</summary>
     <label>IR Length/Echo time <input type="range" id="rir_rirIrLength" min="1024" max="32768" step="1024"> <span id="rir_rirIrLength_val"></span></label>
@@ -286,7 +317,6 @@ h5 { font-size: 40%; }
     <label>Echo Attenuation <input type="range" id="rir_rirEchoAttenuation" min="0.01" max="4" step="0.01"> <span id="rir_rirEchoAttenuation_val"></span></label>
     <button id="rir_triggerRIRMeasure">Measure RIR again</button>
   </details>
-  </details>
   <pre id="rir_stats" style="font-size: 60%; white-space: pre-wrap; word-break: break-all; max-width: 100%; overflow-wrap: break-word;"></pre>
   <audio id="rir_music" src="clips/music1.mp3" loop controls></audio>
   <audio id="rir_speech1" src="clips/speech1.mp3" loop controls></audio>
@@ -298,10 +328,58 @@ h5 { font-size: 40%; }
 </div>
 
 <div class="step slide" id="lms">
+  <details>
+    <summary>LMS adaptive filter</summary>
+    <ul>
+      <li>Finally a real AEC. Instead of measuring once, we try to model the entire echo path all the time. We use an LMS (Least Mean Squares)
+          adaptive filter to do this.</li>
+      <li>The filter tries to predict what the echo will look like, then compares the prediction to what
+          the mic actually captures, computes the error, and adapts the filter coefficients to make the error smaller.
+          Over time, the filter converges to approximate the room's transfer function.</li>
+      <li>This is the base of real AECs. The filter adapts continuously, so it can track changes in the acoustic environment. It won't break
+          just because a person moved around (but it will take some time to reconverge, which you can see in the demo!)</li>
+      <li>This implementation is half naive: when there is no far end signal, the filter stops adapting (good), but when there is far end signal
+          AND near end signal, the filter will try to remove local speech too. This is called double-talk, a situation where both far and near
+          speakers are active. Double talk is the most challenging environment for an AEC.</li>
+      <li>More things LMS can't model: non-linear distortion. When your speaker clips or has harmonic distortion, the echo won't be a
+          linear function of the far-end signal, and a linear filter can't fully cancel it. Typically there are non-LTI suppressors run after an AEC
+          to improve performance.</li>
+      <li><details><summary>LMS params</summary>
+        <ul>
+          <li>Filter Length: how many taps (samples) to use. This is the maximum echo tail
+              it can model. Like RIR's IR length, it must be longer than your room's reverb, otherwise the filter
+              can't capture the full impulse response and you'll have residual echo. Longer = more compute per sample,
+              and slower convergence (more coefficients to learn). Too short = can't model the room. Too long = slow
+              and may never fully converge.</li>
+          <li>Step Size (μ): the learning rate - how aggressively the filter updates its coefficients each sample.
+              This is the most sensitive parameter:
+            <ul>
+              <li>Too high: the filter overshoots, oscillates, or diverges entirely. You'll hear ringing, pumping,
+                  or the echo getting worse instead of better. In extreme cases, it explodes into loud noise.</li>
+              <li>Too low: the filter adapts too slowly. It may take seconds to converge, and it can't track
+                  fast changes in the acoustic environment (someone moving, door opening).</li>
+              <li>The optimal μ depends on the signal level and filter length. NLMS (Normalized LMS) automatically
+                  scales μ by signal power to make this less touchy.</li>
+            </ul></li>
+          <li>Leakage: each sample, the filter coefficients are multiplied by this value (slightly less than 1).
+              This slowly "forgets" old information, preventing coefficients from drifting to extreme values over time.
+              Values very close to 1 (like 0.9999) mean almost no leakage - the filter has a long memory. Lower values
+              make the filter more forgetful, which can help track changes but reduces steady-state performance.</li>
+          <li>Min Delay: the minimum acoustic delay before echo appears. Sound takes time to travel from speaker to mic,
+              plus system latency. The filter doesn't need to model this silent period - we can skip it and start the
+              filter where the echo actually begins. Saves computation and helps convergence. Set this to roughly your
+              system's round-trip latency (usually 20-100ms depending on your audio setup).</li>
+          <li>Reset Filter: clears all coefficients back to zero. Useful when the filter has diverged or you've changed
+              the acoustic setup significantly. After reset, the filter needs time to reconverge.</li>
+        </ul></details></li>
+      <li>Watch the filter visualization: you can see the coefficients adapt in real-time. When it's working, you'll
+          see the filter shape stabilize to something that looks like an impulse response.</li>
+    </ul>
+  </details>
   <button id="lms_rec">Mic enable</button>
   <button id="lms_play" disabled>Play</button>
   <button id="lms_debugRec">Debug tracks</button>
-  <button id="lms_evalPerf" disable>Eval Perf</button>
+  <button id="lms_evalPerf" disabled>Eval Perf</button>
   <details>
     <summary>LMS config</summary>
     <label>Filter Length <input type="range" id="lms_lmsFilterLength" min="1024" max="8192" step="512"> <span id="lms_lmsFilterLength_val"></span></label>
@@ -325,7 +403,7 @@ h5 { font-size: 40%; }
   <button id="playground_rec">Mic enable</button>
   <button id="playground_play" disabled>Play</button>
   <button id="playground_debugRec">Debug tracks</button>
-  <button id="playground_evalPerf" disable>Eval Perf</button>
+  <button id="playground_evalPerf" disabled>Eval Perf</button>
   <select id="playground_mode">
     <option value="passthrough">Passthrough</option>
     <option value="silenceMic">Silence mic</option>
