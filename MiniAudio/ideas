@@ -1,0 +1,183 @@
+TODO:
+
+* Look for title
+* Look for icon
+* Quantizer demo -> how your voice sounds at different quantization levels
+
+How different letters have different fft shapes
+
+# Audio & Telephony for Kids (Age 8)
+
+## Session Goals
+- Understand sound is vibrations traveling through air
+- Experience how pitch and volume work
+- Learn why we have two ears
+- See how phones carry voice across distance
+- Have fun with weird :udio experiments!
+
+## Session Flow (~45-60 minutes)
+
+---
+
+### 1. What IS Sound? (5 min)
+**Concept:** Sound is wiggly air - vibrations that travel to your ears.
+
+**Experiments:**
+- Put hand on throat while humming - feel the vibrations
+- Put hand near speaker playing bass - feel the air move
+- Ruler on desk edge: push it down and let go - watch it wiggle, hear the buzz
+
+**Analogy:** Like throwing a rock in a pond - waves spread out. Sound is waves in air!
+
+---
+
+### 2. Pitch: Fast Wiggles vs Slow Wiggles (8 min)
+**Concept:** Fast vibrations = high sounds (mouse squeak). Slow vibrations = low sounds (elephant rumble).
+
+**Experiments:**
+- Tone generator demo: slide from low to high
+- Long ruler vs short ruler: which wiggles faster? Which sounds higher?
+- Stretch a rubber band tight vs loose - pluck it
+
+**Fun challenge:**
+- "How high can you hear?" - slowly increase frequency until kids can't hear it anymore
+- Adults lose high-frequency hearing - can the kids hear sounds the adults can't?
+
+---
+
+### 3. Volume: Big Waves vs Small Waves (5 min)
+**Concept:** Big vibrations = loud. Small vibrations = quiet.
+
+**Experiments:**
+- Amplitude slider demo: same pitch, change volume
+- Clap hands softly vs hard
+- Pluck a rubber band gently vs strongly
+
+**Analogy:** Whisper vs shout - your throat moves more when you shout!
+
+---
+
+### 4. Your Voice Has a Shape! (5 min)
+**Concept:** Different sounds look different - even at the same pitch.
+
+**Experiments:**
+- Spectrogram/FFT visualization of voice
+- Say "aaah" vs "eeee" vs "oooo" - watch the patterns change
+- Whistle vs hum at same pitch - look totally different!
+
+**Analogy:** Like fingerprints - every sound has its own pattern.
+
+---
+
+### 5. Why Different Instruments Sound Different (5 min)
+**Concept:** A piano and a violin playing the same note sound different because of their "shape" (timbre).
+
+**Experiments:**
+- Play same note: piano vs guitar vs flute (recordings or live)
+- Look at spectrogram - same main pitch, but different patterns around it
+- Your voice vs friend's voice saying same word - you can tell them apart!
+
+**Analogy:** Like different people's handwriting - same letters, but look different.
+
+---
+
+### 6. Why Do We Have Two Ears? (8 min)
+**Concept:** Two ears help us figure out WHERE sounds come from.
+
+**Experiments:**
+- Close eyes, point to where a sound comes from (someone claps in different spots)
+- Cover one ear - is it harder to tell direction?
+- Sound reaches left and right ear at slightly different times!
+
+**Fun challenge:**
+- "Marco Polo" style game - find the sound source with eyes closed
+
+**Speed of sound teaser:**
+- See lightning, count seconds until thunder (3 seconds ≈ 1 km away)
+- Sound is actually pretty slow! Light is instant, sound takes time.
+
+---
+
+### 7. The Telephone: Voice Travels Far! (10 min)
+**Concept:** Phones turn your voice into electricity, send it far away, then turn it back into sound.
+
+**Experiments:**
+- String telephone (cups + string): feel the string vibrate when someone talks
+- Why does it work? Vibrations travel through the string!
+- Real phones: same idea, but with electricity instead of string
+
+**Demo flow:**
+1. You talk → microphone feels vibrations → turns them into wiggly electricity
+2. Wiggly electricity travels through wires (or radio waves!)
+3. Speaker receives electricity → wiggles → makes air vibrate → you hear it!
+
+**Analogy:** Like a really long string telephone that works without the string.
+
+---
+
+### 8. The Echo That Breaks Your Brain (8 min)
+**Concept:** Hearing yourself with a delay is SO confusing you can't talk!
+
+**Experiments:**
+- Echo demo: try to read a sentence while hearing yourself delayed
+- Start with small delay (reverb - not too bad)
+- Increase delay to ~200ms - watch kids struggle to speak!
+- Why? Your brain expects to hear itself immediately - delay confuses it
+
+**Fun challenge:**
+- Who can read a full sentence with echo on?
+- (Spoiler: almost no one can!)
+
+**Real-world connection:** This is why phone companies work hard to remove echo!
+
+---
+
+### 9. Computers Making Sound (5 min)
+**Concept:** Computers don't have mouths - they make sound with numbers!
+
+**Experiments:**
+- Show waveform as a line going up and down
+- Draw your own silly waveform - hear how weird it sounds!
+- Smooth wave (sine) = nice tone. Jagged wave = buzzy/weird
+
+**Mind-blower:** All the music on your tablet is just lists of numbers!
+
+---
+
+### 10. Wrap-Up: Sound is Everywhere! (5 min)
+**Recap questions:**
+- What IS sound? (Wiggly air / vibrations)
+- What makes pitch high or low? (Fast vs slow wiggles)
+- Why do we have two ears? (Find where sounds come from)
+- How do phones work? (Vibrations → electricity → vibrations)
+
+**Take-home ideas:**
+- Make a string telephone at home
+- Feel your throat when you hum different notes
+- Count seconds between lightning and thunder
+
+---
+
+## Equipment Needed
+- Computer/tablet with audio demos
+- Speakers (with visible woofer if possible)
+- Plastic rulers (different lengths)
+- Rubber bands
+- String telephone materials (cups, string)
+- Blindfold for direction-finding game
+
+## Demo Features Needed
+- Simple tone generator (big frequency slider, big amplitude slider)
+- Real-time spectrogram/waveform of voice
+- Echo/delay effect with adjustable delay
+- "Draw your own waveform" tool
+- "Can you hear this?" high-frequency test
+- Maybe: simple animation of sound waves traveling
+
+## Tips for Presenting to Kids
+- Let them try everything - hands-on is key
+- Ask "what do you think will happen?" before each experiment
+- Use silly comparisons (mouse vs elephant, whisper vs superhero yell)
+- Keep each section short - move on before attention wanders
+- Celebrate when they notice something ("Yes! You discovered that!")
+- It's OK if it gets noisy - that's kind of the point!

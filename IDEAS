@@ -1,0 +1,79 @@
+# SlidewareEngineering - Audio Presentations
+
+## Covered Topics
+
+### Arrays to Air (AirToArrays)
+A technical deep-dive into digital audio fundamentals:
+
+- **Basic tone properties**: Frequency (pitch), amplitude (volume), and how they map to perception
+- **Sound as color**: Visual parallel between audio frequency and light wavelength
+- **Human hearing range**: Speech, music, and equipment limitations (50Hz - 10kHz practical range)
+- **Logarithmic perception**: Linear sliders feel unnatural; log scales match human hearing (Weber-Fechner law)
+- **Loudness is psychoacoustic**: dBFS, equal-loudness contours (Fletcher-Munson), why same amplitude sounds different at different frequencies
+- **Phase and interference**: Two tones interacting, constructive/destructive interference, beat frequencies
+- **Waveforms and harmonics**: Sine vs square vs triangle vs sawtooth - each has different harmonic content visible in FFT
+- **Custom waveforms**: Drawing arbitrary sample buffers, why time-domain manipulation is impractical
+- **Fourier decomposition**: Any periodic signal can be represented as a sum of sine waves
+- **Voice reconstruction**: Decomposing and reconstructing speech with oscillator banks
+- **Spectrograms**: Time x frequency x magnitude plots for understanding complex signals
+
+### What The Audio (WhatTheAudio)
+An interactive demo collection focused on experiential learning:
+
+- **Sound as color**: Visual mapping of frequency to visible light spectrum
+- **Voice has a shape**: 3D FFT visualization of speech
+- **Waveform shapes**: Hear how sine/square/triangle waves differ and see their harmonics
+- **Audio effects**: Apply VHS, old phone, underwater filters to music/voice
+- **Echo disruption**: Demonstrates how delayed audio feedback makes speaking nearly impossible
+
+### Stop Copying Me (StopCopyingMe)
+Deep dive into acoustic echo cancellation (AEC) for telephony:
+
+- **Echo perception thresholds**: Self-feedback (<5ms), reverb (10-40ms), disruptive echo (>50ms)
+- **Half-duplex**: Early speakerphone approach - mute mic when far-end is active. Attack/decay/threshold tuning. Poor conversation flow.
+- **Naive subtraction**: Just subtract far-end from mic. Fails due to acoustic delay.
+- **Time-aligned subtraction**: Use cross-correlation to estimate loopback delay, then subtract. Reduces comb effect but room coloration defeats simple subtraction.
+- **Room Impulse Response (RIR)**: Measure room transfer function with test signals (Dirac, MLS). Convolve and subtract. Works but static measurement goes stale.
+- **LMS adaptive filter**: Real AEC that continuously models the echo path. Covers step size, filter length, leakage, convergence. Discusses double-talk problem and non-linear distortion.
+- **Playground**: All strategies combined for experimentation
+
+---
+
+## Future Topic Ideas
+
+### Digital Audio Fundamentals
+- **Sampling & Nyquist theorem**: Why 44.1kHz? What happens when you undersample (aliasing demos)
+- **Bit depth & quantization**: 16-bit vs 24-bit, quantization noise, dithering
+- **Audio codecs**: How MP3/AAC exploit psychoacoustics to compress audio (perceptual coding, masking)
+
+### Spatial Audio
+- **Stereo and localization**: How two ears determine direction (ILD, ITD)
+- **Binaural audio & HRTF**: 3D sound with headphones
+- **Room acoustics**: Reverb, early reflections, RT60, absorption coefficients
+
+### Sound Design & Synthesis
+- **Synthesis techniques**: Additive, subtractive, FM, wavetable, granular
+- **Envelopes (ADSR)**: Why sounds have shape over time
+- **Filters in depth**: Low-pass, high-pass, bandpass, resonance, filter sweeps
+
+### Music & Perception
+- **Consonance & dissonance**: Why certain intervals sound "good" (harmonic ratios, critical bandwidth)
+- **Timbre**: Why a piano and violin playing the same note sound different (harmonic envelope)
+- **Psychoacoustic masking**: How loud sounds hide quiet ones (used in compression)
+
+### Practical/Engineering
+- **Latency & real-time audio**: Buffers, buffer underruns, scheduling, WebAudio timing
+- **Dynamic range processing**: Compression, limiting, noise gates, side-chaining
+- **Microphones & speakers**: How transducers work, frequency response curves, polar patterns
+
+### Advanced Echo Cancellation (extends StopCopyingMe)
+- **NLMS and variants**: Normalized LMS, affine projection, RLS
+- **Double-talk detection**: Geigel, correlation-based, neural approaches
+- **Non-linear processing**: Residual echo suppression, comfort noise
+- **Beamforming**: Using multiple mics for spatial filtering
+
+### Speech Processing
+- **Formants and phonemes**: How vowels and consonants are formed
+- **Pitch detection**: Autocorrelation, YIN, neural pitch trackers
+- **Voice activity detection**: Energy-based, statistical, ML-based VAD
+- **Noise suppression**: Spectral subtraction, Wiener filtering, neural denoisers

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>Sounds and phones</title>
+    <!-- https://www.flaticon.com/free-icon/line_15654932 -->
+    <link rel="shortcut icon" href="img/favicon.png" />
+    <link href="css/classless.css" rel="stylesheet">
+    <link href="css/common.css" rel="stylesheet" />
+    <link href="css/pdfprint.css" rel="stylesheet" />
+    <link href="extdeps/deps.css" rel="stylesheet">
+
+  <style>
+  </style>
+
+</head>
+
+<body class="impress-not-supported">
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Firefox</b> browser. <small>Chrome probably works too</small></p>
+</div>
+
+<div id="impress-toolbar"></div>
+
+<div id="impress"
+    data-transition-duration="0"
+    data-width="2020"
+    data-height="1200"
+    data-max-scale="3"
+    data-min-scale="0">
+
+<!-- Slide1 defines canvas position start with data-(x,y). Slide2 needs to
+  define data-rel-(x,y) to tell impress.js the default relative movement.
+  Successive slides don't need to define any (x,y), unless we need to
+  override the position of a slide -->
+<div class="step slide" id="soundsAndPhones" data-x="0" data-y="1920">
+  <h1><img src="img/favicon.png" />Sounds and phones</h1>
+
+  <div class="bottom-badge">
+    <img width="25%" src="img/qr.png"/>
+    <p><a href="https://nicolasbrailo.github.io/">https://nicolasbrailo.github.io/</a></p>
+    <p class="fineprint">(PSA: Careful when scanning untrusted QR codes!)</p>
+  </div>
+<!-- 
+I work with sounds, and computers and phones. Computers have no ears, but they can listen. They have no mouth, but they can "speak" and play music. Have you ever wondered how?
+-->
+</div>
+
+<div class="step slide" id="warning" data-rel-y="3840">
+  <h1>DON'T USE HEADPHONES</h1>
+  <h2 class="blink">DON'T USE HEADPHONES</h2>
+  <h3 class="rainbow">PLEASE, DON'T USE HEADPHONES</h3>
+  <p class="main-content-verticalcenter">Some demos can have very loud, annoying or even painful audio. Don't use headphones.
+    Using headphones may be detrimental to your hearing health.</p>
+</div>
+
+<div class="step slide" id="soundTransmission">
+Sound is air pushing and pulling very quickly, a tiny tiny amount. Thousands of times a second. It travels through air the same way ripples travel in a pond when we throw a stone. You can feel how it vibrates through air (with your ears) but you can also feel it in other things: put your hand on your throat while you speak, and hum different notes. Also: put your hand in a speaker, and hear different sounds.
+
+[Experiment 1: feel different notes in your throat, then feel how different pitches make a speaker vibrate. Focus on high vs low pitch]
+</div>
+
+<div class="step slide" id="soundSamples">
+For us, sound is what our ears detect from air "wiggling" very fast. For a computer: sound is when a microphone or a speaker vibrates. When something vibrates, it wiggles a tiny bit, moving up and down. A computer's (or a phone's) microphone will measure how much movement that vibration creates, and it will store a number. A speaker does the opposite: it reads the number, and will "move" to a position determined by this number. You can't measure this with a ruler! The movement is so tiny that you can't see it with your eyes. Computers are super sensitive, and they don't need a big movement. We can "see" the measurements a computer stores by using a program.
+
+[Experiment 2: record a few sounds with Audacity. See how speaking louder changes amplitude. Try it with different sounds, too. Zooming in we can see the individual numbers that make up sound for a computer.]
+</div>
+
+<div class="step slide" id="basicTone">
+A computer will "remember" a list of numbers that make up sound. This can be a list of numbers that makes music, or a list of numbers that records how you speak. It's all just numbers. A very very very long list of numbers: a computer will remember 48000 numbers for every second of audio it records! Because it is all numbers, a computer can change how things sound. For example, we can make things sound louder by multiplying every number in this list by 2. If you are a computer, it's important to know your times tables.
+
+We can do more than just see the volume: we know that the higher the number is, the louder it sounds. We can also hear what happens when the numbers "wiggle" faster or slower. How quickly air wiggles determines the pitch, but this is very hard to see directly when we speak, because our pitch changes very quickly. We can get a computer to play a simpler sound, that will change the pitch only when we tell it to. This way, we can see how the speed of wiggling affects the sound.
+
+[Experiment 3: frequency to determine pitch using a test tone]
+
+  <button id="basicTone_demoToggle">Start</button>
+  <label>Frequency <input type="range" id="basicTone_frequency" min="50" max="10000" value="440"></label>
+  <label>Amplitude <input type="range" id="basicTone_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <canvas id="basicTone_canvas"></canvas>
+</div>
+
+<div class="step slide" id="highPitch">
+Our hearing is very sensitive and we can hear very low pitches, and very high pitches, but every person hears a little bit differently. This also depends on how old you are, and how much you've cared for your hearing health. We can make an experiment on this too.
+
+[Experiment 4: check hearing range, verify test speaker can reach 15K+. If test speaker isn't too broken, children should be able to hear much higher pitches than me]
+
+Your ear is full of little hairs that "dance" with sound. Like this one: https://www.youtube.com/watch?v=pij8a8aNpWQ
+As you get old, or if you listen to very loud sounds very often, some of those hairs stop dancing. Make sure you take care of your hearing health!
+  <button id="highPitch_demoToggle">Start</button>
+  <label>Frequency <input type="range" id="highPitch_frequency" min="50" max="10000" value="440"></label>
+  <label>Amplitude <input type="range" id="highPitch_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <canvas id="highPitch_canvas"></canvas>
+</div>
+
+<div class="step slide" id="toneColour">
+  <h2>Color</h2>
+  <details>
+    <summary>Notes</summary>
+      Different people will hear different ranges of pitches. Animals too: cats and dogs can hear pitches 4 times higher than humans. Dolphins and bats up to 10 times more. A similar thing happens with colors: you can see colors in the rainbow, but bees can see colors that we can't see. Their eyes work differently. In fact, sound pitch and light color are very similar: they are both how fast something "wiggles" (sound needs air to travel through, but light doesn't need anything!). For computers, both colors and sounds are just numbers, so we can use a program to convert "sound-pitch" to "light-pitch" (colour!)
+
+      [Experiment 5: adjust the tone to see how it affects colors: the higher the frequency, the higher the pitch, and the closer it should get to the violet end of the rainbow.]
+  </details>
+  <button id="toneColour_demoToggle">Start</button>
+  <label>Frequency <input type="range" id="toneColour_frequency" min="50" max="10000" value="440"></label>
+  <label>Amplitude <input type="range" id="toneColour_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <div id="toneColour_colorDisplay" style="width: 95vw" class="color-display"></div>
+  <div id="toneColour_colorInfo"></div>
+</div>
+
+<div class="step slide" id="speedOfSound">
+Because to computers everything is just numbers, we can convert one type of numbers to another: we can convert a list of sound-numbers to electricity-numbers or to light-numbers, and send those to another computer, so that the other computer can make sound. Why do we do this? Sounds don't travel very far, and they don't travel very fast.
+
+[Experiment 6: measuring the speed of sound; combine two recording channels to show that distance is proportional to flight-of-time delay]
+
+Sound travels about 350 meters per second. Sound would take a full second to travel between the school and the playground in Highbury fields. It would take about 2 minutes to travel between London and Brighton. That seems fast, but imagine speaking to someone who will take 4 minutes to answer? And imagine how much you'll have to shout. Light is a lot faster, it takes about 1 second to travel from the moon to us, so phones use light (or electricity, which is just as fast) to send each other lists of numbers.
+</div>
+
+<div class="step slide" id="fft">
+When a computer receives audio and plays that for us, we can recognize who is talking, and we can also recognize music and melodies. How do we do that? Each sound has a shape. Open the "spectrogram" (this is a fancy way of saying "drawing of how frequency changes with time"). Make just one sound, one phoneme, into the microphone, and see how your voice is made up not of one single pitch, but many different pitches, in a complex pattern that changes with time. See how vowels like "O" or "A" have a lot of low pitch, and consonants like "S" or "T" mostly high pitch. Also try musical instruments. Can you see the different notes?
+
+[Experiment 7: open a spectrogram, find a link between the graph and pitch/loudness]
+[Experiment 8: same pitch but different harmonics determine timbre]
+  <a href="/fft.html" target="blank">Open frequency graph</a>
+</div>
+
+<div class="step slide" id="humanVoice">
+  <label>Source
+    <select id="humanVoice_src">
+      <option value="mic">Your mic</option>
+      <option value="sine">Sine</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="square">Square</option>
+    </select>
+  </label>
+  <canvas id="humanVoice_fft"></canvas>
+</div>
+
+</div>
+
+<script src="extdeps/deps.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

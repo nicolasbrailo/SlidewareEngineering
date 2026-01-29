@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFT Spectrogram</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    #spectrogram {
+      width: 95vw;
+      height: 95vh;
+      background: #000;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="spectrogram"></canvas>
+
+  <script type="module">
+    import { mkSpectrogramPlot } from './js/canvasSpectrogram.js';
+
+    async function init() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioCtx = new AudioContext();
+        const micSource = audioCtx.createMediaStreamSource(stream);
+
+        // Params "optimized" for speach visualization in an RPI 4
+        const spectrogram = mkSpectrogramPlot('spectrogram', audioCtx, {
+          fftSize: 8192,
+          timeSliceWidthPx: 2,
+          minFreq: 50,
+          maxFreq: 6000,
+          scale: 'mel-compressed',
+          renderFps: 20,
+          analysisFps: 60,
+        });
+
+        spectrogram.connectInput(micSource);
+      } catch (err) {
+        console.error('Failed to access microphone:', err);
+        alert('Microphone access is required for this demo.');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
