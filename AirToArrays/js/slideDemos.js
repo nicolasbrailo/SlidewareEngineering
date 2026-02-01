@@ -1,7 +1,7 @@
 import { createPlot, drawWave, drawSineWave, drawTriangleWave, drawSawtoothWave, createCustomFrameEditor,
          drawSquareWave, drawDbfsYAxis, drawAmplitudeNotches, generateTwoTonePoints, buildTimeDomainPlot } from './canvasHelpers.js';
 import { createOscillatorManager, createDualOscillatorManager, createLogLinConverter, createMicRecorder,
-         makeAudioMotionAnalyzer, toDbfs, formatFreq, createSignalReconstructor, getUserMic } from './audioHelpers.js';
+         makeAudioMotionAnalyzer, toDbfs, formatFreq, createSignalReconstructor, getUserMic, isMicAvailable } from './audioHelpers.js';
 import { visSpect01ToWavelength, wavelengthToRGB } from './colorHelpers.js';
 import { createSpectrogramRenderer } from './spectrogramToCanvas.js';
 
@@ -966,37 +966,71 @@ export async function fftSpeech(ctx) {
 
 export async function humanVoice(ctx) {
   const plot = createSpectrogramRenderer(ctx, 'humanVoice_fft', {fftSize: 4096, timeSliceWidthPx: 2});
-  const stream = await getUserMic();
-  let mic = ctx.createMediaStreamSource(stream);
+  const srcSelect = document.getElementById('humanVoice_src');
+
+  let mic = null;
+  let stream = null;
   let osc = ctx.createOscillator();
   let gain = ctx.createGain();
 
   plot.connectInput(gain);
-
   gain.gain.value = 0.8;
   osc.start();
 
-  const updateSrc = () => {
-    // Disconnect both inputs. One of these will throw, the other should succeed.
-    try { mic.disconnect(gain); } catch(e) {}
+  // Check mic availability and disable mic option if not available
+  const micAvailable = isMicAvailable();
+  if (!micAvailable) {
+    // Find and disable the mic option
+    const micOption = srcSelect.querySelector('option[value="mic"]');
+    if (micOption) {
+      micOption.disabled = true;
+      micOption.textContent += ' (requires HTTPS)';
+    }
+    // If mic was selected, switch to sine
+    if (srcSelect.value === 'mic') {
+      srcSelect.value = 'sine';
+    }
+  }
+
+  const updateSrc = async () => {
+    // Disconnect current inputs
+    try { if (mic) mic.disconnect(gain); } catch(e) {}
     try { osc.disconnect(gain); } catch(e) {}
-    if (document.getElementById('humanVoice_src').value == 'mic') {
+
+    if (srcSelect.value === 'mic' && micAvailable) {
+      // Lazily acquire mic on first use
+      if (!stream) {
+        try {
+          stream = await getUserMic();
+          mic = ctx.createMediaStreamSource(stream);
+        } catch (e) {
+          console.error('Failed to get mic:', e);
+          srcSelect.value = 'sine';
+          osc.type = 'sine';
+          osc.connect(gain);
+          return;
+        }
+      }
       mic.connect(gain);
     } else {
-      osc.type = document.getElementById('humanVoice_src').value;
+      osc.type = srcSelect.value;
       osc.connect(gain);
     }
   };
 
-  updateSrc();
+  await updateSrc();
 
-  document.getElementById('humanVoice_src').addEventListener('change', updateSrc);
+  srcSelect.addEventListener('change', updateSrc);
   return () => {
-    document.getElementById('humanVoice_src').removeEventListener('change', updateSrc);
+    srcSelect.removeEventListener('change', updateSrc);
     plot.stop();
-    stream.getTracks().forEach(track => track.stop());
-    mic.disconnect();
-    mic = null;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    if (mic) {
+      mic.disconnect();
+      mic = null;
+    }
   };
 }
 

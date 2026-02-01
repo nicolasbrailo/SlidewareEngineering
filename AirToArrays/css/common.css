@@ -529,7 +529,55 @@ select {
   font-size: 50%;
 }
 
-/* Mobile landscape: position prev/next buttons on left/right edges, centered vertically */
+/* Click-to-start overlay: shown when we need user interaction before we can start the audio context */
+#start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  cursor: pointer;
+  transition: opacity 0.3s ease-out;
+  /* Reset any inherited transforms */
+  transform: none !important;
+}
+
+#start-overlay.hiding {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#start-overlay .start-overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+#start-overlay .start-overlay-content h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+#start-overlay .start-overlay-content p {
+  font-size: 1.2rem;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+/* Mobile landscape: hack the style a little bit so that it's usable in mobile:
+  - position prev/next buttons on left/right edges, so the user doesn't have to fiddle with swipes to move slides
+  - Make buttons/ranges bigger and easier to interact with
+  - Add padding/margin all around
+*/
 @media (orientation: landscape) and (max-height: 500px) {
   #impress-toolbar {
     transform: none;

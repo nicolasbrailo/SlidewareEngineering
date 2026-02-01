@@ -1,4 +1,3 @@
-import { getUserMic } from './audioHelpers.js';
 import * as slideDemosIndex from './slideDemos.js';
 
 // highlight.js seems to automagically start, but if it doesnt:
@@ -49,6 +48,27 @@ function setupMobileTouchHandlers() {
   });
 }
 
+// Create and show the click-to-start overlay
+function createStartOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'start-overlay';
+  overlay.innerHTML = `
+    <div class="start-overlay-content">
+      <h1>Click to Start</h1>
+      <p>User interaction required for audio</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+// Initialize the presentation after user interaction
+function initPresentation() {
+  window.presentationManager = impress();
+  window.presentationManager.init();
+  initSlideNo(window.presentationManager);
+}
+
 window.addEventListener('load', async () => {
   setupMobileTouchHandlers();
   window.currentSlideTitle = null;
@@ -61,11 +81,31 @@ window.addEventListener('load', async () => {
     window.currentSlideTitle = null;
   });
 
-  // Request user mic to ensure user interaction, which also means we can create audio ctx
-  getUserMic().then(_ => {
-    window.presentationManager = impress();
-    window.presentationManager.init();
-    // Show slide number
-    initSlideNo(window.presentationManager);
-  });
+  // Try mic first (permission dialog counts as user interaction)
+  // Fall back to click overlay if mic unavailable or denied
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop()); // Release mic immediately
+    initPresentation();
+    return;
+  } catch (e) {
+    // User denied, unavailable (non-HTTPS), or error - fall through to overlay
+    console.log('Mic access denied or unavailable, using click-to-start overlay');
+  }
+
+  // Show overlay and wait for user interaction to enable AudioContext
+  const overlay = createStartOverlay();
+  const startPresentation = () => {
+    overlay.classList.add('hiding');
+    setTimeout(() => overlay.remove(), 300);
+    initPresentation();
+  };
+
+  overlay.addEventListener('click', startPresentation, { once: true });
+  overlay.addEventListener('touchend', startPresentation, { once: true });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      startPresentation();
+    }
+  }, { once: true });
 });

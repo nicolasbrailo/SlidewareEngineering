@@ -3,10 +3,23 @@
  */
 
 /**
+ * Check if microphone access is possible.
+ * Requires HTTPS or localhost due to browser security requirements.
+ * @returns {boolean} True if microphone API is available
+ */
+export function isMicAvailable() {
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+
+/**
  * Get user microphone with optimal settings for audio analysis.
  * @returns {Promise<MediaStream>} Media stream from microphone
+ * @throws {Error} If microphone is not available (non-HTTPS)
  */
 export function getUserMic() {
+  if (!isMicAvailable()) {
+    return Promise.reject(new Error('Microphone requires HTTPS or localhost'));
+  }
   return navigator.mediaDevices.getUserMedia({
     video: false,
     audio: {autoGainControl: false, echoCancellation: false, noiseSuppression: false},
@@ -557,36 +570,56 @@ export function createMicRecorder(recordBtnId, ctx, timeoutMs=1000) {
   let isRecording = false;
   let recordedBuffer = null;
 
+  // Disable recording if mic is not available
+  if (!isMicAvailable()) {
+    recordBtn.textContent = 'Mic unavailable (requires HTTPS)';
+    recordBtn.disabled = true;
+    return {
+      record: () => Promise.reject(new Error('Microphone not available')),
+      getRecordedBuffer: () => null,
+      isMicAvailable: () => false,
+      destroy: () => {},
+    };
+  }
+
   const record = async () => {
     if (isRecording) return;
     isRecording = true;
     recordBtn.textContent = 'Recording...';
     recordBtn.disabled = true;
 
-    const stream = await getUserMic();
-    const chunks = [];
+    try {
+      const stream = await getUserMic();
+      const chunks = [];
 
-    const mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-    mediaRecorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
-      const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
-      const arrayBuffer = await blob.arrayBuffer();
-      recordedBuffer = await ctx.decodeAudioData(arrayBuffer);
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
+        const arrayBuffer = await blob.arrayBuffer();
+        recordedBuffer = await ctx.decodeAudioData(arrayBuffer);
 
+        isRecording = false;
+        recordBtn.textContent = 'Record';
+        recordBtn.disabled = false;
+      };
+
+      mediaRecorder.start();
+      setTimeout(() => mediaRecorder.stop(), timeoutMs);
+    } catch (e) {
+      console.error('Failed to record:', e);
       isRecording = false;
-      recordBtn.textContent = 'Record';
+      recordBtn.textContent = 'Record failed';
       recordBtn.disabled = false;
-    };
-
-    mediaRecorder.start();
-    setTimeout(() => mediaRecorder.stop(), timeoutMs);
+    }
   }
 
   recordBtn.addEventListener('click', record);
   return {
     record,
     getRecordedBuffer: () => recordedBuffer,
+    isMicAvailable: () => true,
     destroy: () => {
       recordBtn.removeEventListener('click', record);
     },

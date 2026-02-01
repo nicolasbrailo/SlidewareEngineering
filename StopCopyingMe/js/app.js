@@ -1,4 +1,3 @@
-import { getUserMic } from './noisy.js';
 import * as slideDemosIndex from './slideDemos.js';
 
 // highlight.js seems to automagically start, but if it doesnt:
@@ -57,6 +56,27 @@ function cleanupSlideDemo() {
   }
 }
 
+// Create and show the click-to-start overlay
+function createStartOverlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'start-overlay';
+  overlay.innerHTML = `
+    <div class="start-overlay-content">
+      <h1>Click to Start</h1>
+      <p>User interaction required for audio</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+// Initialize the presentation after user interaction
+function initPresentation() {
+  window.presentationManager = impress();
+  window.presentationManager.init();
+  initSlideNo(window.presentationManager);
+}
+
 // Prevent touch events on slide controls from propagating to impress.js in mobile landscape
 // In mobile, trying to interact with demos' sliders/buttons will fight against impress.js slide handling, so
 // without this moving a range will try to move to the next slide
@@ -88,15 +108,30 @@ window.addEventListener('load', async () => {
     cleanupSlideDemo();
   });
 
-  // Request user mic to ensure user interaction, which also means we can create audio ctx
+  // Try mic first (permission dialog counts as user interaction)
+  // Fall back to click overlay if mic unavailable or denied
   try {
-    await getUserMic();
-  } catch (x) {
-    console.log("getUserMic failed, demos will break:", x);
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop()); // Release mic immediately
+    initPresentation();
+    return;
+  } catch (e) {
+    console.log('Mic access denied or unavailable, using click-to-start overlay');
   }
 
-  window.presentationManager = impress();
-  window.presentationManager.init();
-  // Show slide number
-  initSlideNo(window.presentationManager);
+  // Show overlay and wait for user interaction to enable AudioContext
+  const overlay = createStartOverlay();
+  const startPresentation = () => {
+    overlay.classList.add('hiding');
+    setTimeout(() => overlay.remove(), 300);
+    initPresentation();
+  };
+
+  overlay.addEventListener('click', startPresentation, { once: true });
+  overlay.addEventListener('touchend', startPresentation, { once: true });
+  overlay.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      startPresentation();
+    }
+  }, { once: true });
 });
