@@ -38,8 +38,12 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
+html {
+    height: 100%;
+}
 body {
     line-height: 1;
+    height: 100%;
 }
 blockquote, q {
     quotes: none;
@@ -64,7 +68,8 @@ table {
 */
 body {
     font-family: 'PT Sans', sans-serif;
-    min-height: 740px;
+    min-height: 100%;
+    overflow: hidden;
 
     background: rgb(215, 215, 215);
     background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
@@ -292,20 +297,45 @@ img, svg {
   vertical-align: text-top;
   object-fit: cover;
 }
+.slide > a > img ,
 .slide > img {
   display: block;
   margin: 1em auto;
+  max-width: 95vw;
   max-height: 95vh;
+  width: auto;
+  height: auto;
+}
+.slide > canvas {
+  display: block;
+  margin: 1em auto;
+  max-height: 95vh;
+  max-width: 95vw;
+  height: auto;
+  width: 100%;
 }
 /* When an image follows another image, show it inline */
 .slide > img + img {
   display: inline-block;
   margin: 1em 0;
 }
-/* When an image is followed by another image, show it inline */
 .slide > img:has(+ img) {
   display: inline-block;
-  margin: 1em 0;
+  margin: 0;
+}
+.slide > canvas + canvas {
+  display: inline-block;
+  width: 48%;
+  height: auto;
+  max-height: 95vh;
+  margin: 0;
+}
+.slide > canvas:has(+ canvas) {
+  display: inline-block;
+  margin: 0;
+  width: 48%;
+  height: auto;
+  max-height: 95vh;
 }
 
 
@@ -320,7 +350,8 @@ img, svg {
  **/
 .img-layout--left-stack {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  /*grid-template-columns: 2fr 1fr;*/
+  grid-template-columns: 1.5fr 1fr;
   gap: 1rem;
   align-items: stretch;
 }
@@ -336,6 +367,11 @@ img, svg {
   display: block;
   height: fit-content;
   width: fit-content;
+}
+.img-layout--left-stack canvas {
+  aspect-ratio: 11 / 4;
+  width: 100%;
+  display: block;
 }
 /********************************************/
 /**
@@ -393,18 +429,21 @@ img, svg {
   padding-left: 1em;
 }
 
+p {
+  font-size: .8em;
+}
 
 label {
   display: flex;
+  align-items: center;
   font-size: 60%;
-  font-weight: bold;
+  white-space: nowrap;   /* prevent word wrap */
+  gap: 0.5em;
 }
 label input[type="range"] {
-  width: 100% !important;
-  display: inline !important;
+  flex: 1;               /* take remaining space */
+  min-width: 0;          /* allow shrinking inside flex */
 }
-
-canvas { width: 60%; }
 
 details {
   font-size: 60%;
@@ -423,6 +462,16 @@ button {
 select {
   font-size: 40%;
   padding: 2; margin: 2;
+}
+
+.audio-motion-analyzer {
+  max-height: 100vh;
+  display: block;
+}
+.audio-motion-analyzer canvas {
+  max-height: 80vh;
+  display: block;
+  margin: 0 auto;
 }
 
 .blink { animation: blink 1s step-start infinite; color: red; }
@@ -478,4 +527,89 @@ select {
 }
 #impress-toolbar select {
   font-size: 50%;
+}
+
+/* Mobile landscape: position prev/next buttons on left/right edges, centered vertically */
+@media (orientation: landscape) and (max-height: 500px) {
+  #impress-toolbar {
+    transform: none;
+  }
+
+  #impress-navigation-ui-prev,
+  #impress-navigation-ui-next {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    padding: 1rem 1.5rem;
+    opacity: 0.7;
+    z-index: 1001;
+  }
+
+  #impress-navigation-ui-prev {
+    left: 10px;
+  }
+
+  #impress-navigation-ui-next {
+    right: 10px;
+  }
+
+  /* Make slide controls bigger on mobile */
+  .slide button {
+    font-size: 100%;
+    padding: 0.3em 0.3em;
+    touch-action: manipulation;
+  }
+
+  .slide label {
+    font-size: 120%;
+    touch-action: none;
+    margin: 0.3em 0;
+    padding: 0.3em 0;
+  }
+
+  .slide input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 20px;
+    height: 0.8em;
+    margin: 1.5em 0;
+    background: #ccc;
+    border-radius: 0.4em;
+    touch-action: none;
+  }
+
+  .slide input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: clamp(44px, 3em, 80px);
+    height: clamp(44px, 3em, 80px);
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .slide input[type="range"]::-moz-range-thumb {
+    width: clamp(44px, 3em, 80px);
+    height: clamp(44px, 3em, 80px);
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .slide input[type="range"]::-moz-range-track {
+    height: 0.8em;
+    background: #ccc;
+    border-radius: 0.4em;
+  }
+
+  .slide select {
+    font-size: 120%;
+    padding: 0.5em;
+    touch-action: manipulation;
+  }
 }

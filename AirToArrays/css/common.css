@@ -38,8 +38,12 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
+html {
+    height: 100%;
+}
 body {
     line-height: 1;
+    height: 100%;
 }
 blockquote, q {
     quotes: none;
@@ -64,7 +68,8 @@ table {
 */
 body {
     font-family: 'PT Sans', sans-serif;
-    min-height: 740px;
+    min-height: 100%;
+    overflow: hidden;
 
     background: rgb(215, 215, 215);
     background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
@@ -522,4 +527,89 @@ select {
 }
 #impress-toolbar select {
   font-size: 50%;
+}
+
+/* Mobile landscape: position prev/next buttons on left/right edges, centered vertically */
+@media (orientation: landscape) and (max-height: 500px) {
+  #impress-toolbar {
+    transform: none;
+  }
+
+  #impress-navigation-ui-prev,
+  #impress-navigation-ui-next {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    padding: 1rem 1.5rem;
+    opacity: 0.7;
+    z-index: 1001;
+  }
+
+  #impress-navigation-ui-prev {
+    left: 10px;
+  }
+
+  #impress-navigation-ui-next {
+    right: 10px;
+  }
+
+  /* Make slide controls bigger on mobile */
+  .slide button {
+    font-size: 100%;
+    padding: 0.3em 0.3em;
+    touch-action: manipulation;
+  }
+
+  .slide label {
+    font-size: 120%;
+    touch-action: none;
+    margin: 0.3em 0;
+    padding: 0.3em 0;
+  }
+
+  .slide input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 20px;
+    height: 0.8em;
+    margin: 1.5em 0;
+    background: #ccc;
+    border-radius: 0.4em;
+    touch-action: none;
+  }
+
+  .slide input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: clamp(44px, 3em, 80px);
+    height: clamp(44px, 3em, 80px);
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .slide input[type="range"]::-moz-range-thumb {
+    width: clamp(44px, 3em, 80px);
+    height: clamp(44px, 3em, 80px);
+    border-radius: 50%;
+    background: #4a90d9;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .slide input[type="range"]::-moz-range-track {
+    height: 0.8em;
+    background: #ccc;
+    border-radius: 0.4em;
+  }
+
+  .slide select {
+    font-size: 120%;
+    padding: 0.5em;
+    touch-action: manipulation;
+  }
 }
