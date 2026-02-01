@@ -529,6 +529,11 @@ select {
   font-size: 50%;
 }
 
+/* Don't show autoplay in the toolbar, interactive demos and autoplay don't go well together */
+.impress-autoplay {
+  display: none;
+}
+
 /* Click-to-start overlay: shown when we need user interaction before we can start the audio context */
 #start-overlay {
   position: fixed;
