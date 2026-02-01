@@ -1,12 +1,33 @@
 import * as canvas from './canvas.js'
 import * as noisy from './noisy.js'
 import { visSpect01ToWavelength, wavelengthToRGB } from './colorHelpers.js';
+import { soundTransmission, soundSamples, speakers } from './soundTransmission.js';
 
-export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, getAmplitude) {
+export { soundTransmission, soundSamples, speakers };
+
+const m$ = (x) => document.getElementById(x);
+
+export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, getAmplitude, options = {}) {
   const startStopBtn = startStopBtnId? document.getElementById(startStopBtnId) : null;
+  const freqLabel = options.freqLabelId ? document.getElementById(options.freqLabelId) : null;
+  const ampLabel = options.ampLabelId ? document.getElementById(options.ampLabelId) : null;
+  const updateLabels = options.updateLabels ?? false;
   let oscillator = null;
   let gainNode = null;
   let oscType = 'sine';
+
+  const updateFreqLabel = (freq) => {
+    if (updateLabels && freqLabel) {
+      freqLabel.textContent = `${freq.toFixed(0)}Hz`;
+    }
+  };
+
+  const updateAmpLabel = (amp) => {
+    if (updateLabels && ampLabel) {
+      const db = amp > 0 ? 20 * Math.log10(amp) : -Infinity;
+      ampLabel.textContent = db === -Infinity ? '-∞dB' : `${db.toFixed(1)}dB`;
+    }
+  };
 
   /**
    * Start the oscillator with current frequency and amplitude.
@@ -15,13 +36,18 @@ export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, 
     oscillator = audioCtx.createOscillator();
     gainNode = audioCtx.createGain();
 
-    oscillator.frequency.value = getFrequency();
+    const freq = getFrequency();
+    const amp = getAmplitude();
+    oscillator.frequency.value = freq;
     oscillator.type = oscType;
-    gainNode.gain.value = getAmplitude();
+    gainNode.gain.value = amp;
 
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     oscillator.start();
+
+    updateFreqLabel(freq);
+    updateAmpLabel(amp);
 
     if (startStopBtn) startStopBtn.textContent = 'Stop';
   };
@@ -61,6 +87,7 @@ export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, 
     if (oscillator) {
       oscillator.frequency.value = freq;
     }
+    updateFreqLabel(freq);
   };
 
   /**
@@ -71,6 +98,7 @@ export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, 
     if (gainNode) {
       gainNode.gain.value = amp;
     }
+    updateAmpLabel(amp);
   };
 
   const setType = (t) => {
@@ -100,7 +128,8 @@ export function createOscillatorManager(audioCtx, startStopBtnId, getFrequency, 
   };
 }
 
-export async function mkBasicToneDemo(prefix, ctx) {
+
+export async function mkBasicToneDemo(prefix, ctx, options = {}) {
   const frequencyRange = document.getElementById(`${prefix}_frequency`);
   const amplitudeRange = document.getElementById(`${prefix}_amplitude`);
 
@@ -108,10 +137,14 @@ export async function mkBasicToneDemo(prefix, ctx) {
   const getFrequency = () => freqConv.linToLog();
   const getAmplitude = () => parseFloat(amplitudeRange.value);
 
-  const redraw = () => canvas.drawSineWave(`${prefix}_canvas`, getFrequency(), getAmplitude());
+  const redraw = () => {
+    if (m$(`${prefix}_canvas`)) {
+      canvas.drawSineWave(`${prefix}_canvas`, getFrequency(), getAmplitude());
+    }
+  }
   redraw();
 
-  const osc = createOscillatorManager(ctx, null, getFrequency, getAmplitude);
+  const osc = createOscillatorManager(ctx, null, getFrequency, getAmplitude, options);
 
   const onFrequencyChange = () => { osc.setFrequency(getFrequency()); redraw(); };
   const onAmplitudeChange = () => { osc.setAmplitude(getAmplitude()); redraw(); };
@@ -132,6 +165,13 @@ export async function mkBasicToneDemo(prefix, ctx) {
 
 export async function basicTone(ctx) { return mkBasicToneDemo('basicTone', ctx); }
 export async function highPitch(ctx) { return mkBasicToneDemo('highPitch', ctx); }
+export async function testTone(ctx) {
+  return mkBasicToneDemo('testTone', ctx, {
+    freqLabelId: 'testTone_freqLabel',
+    ampLabelId: 'testTone_ampLabel',
+    updateLabels: true,
+  });
+}
 
 export async function toneColour(ctx) {
   const frequencyRange = document.getElementById('toneColour_frequency');
@@ -227,6 +267,58 @@ export async function humanVoice(ctx) {
       stream.getTracks().forEach(track => track.stop());
       mic.disconnect();
       mic = null;
+    },
+  };
+}
+
+export async function stopCopyingMe(ctx) {
+  let mic = null;
+  const micGain = ctx.createGain();
+  const attnNode = ctx.createGain();
+  const delayNode = ctx.createDelay(/*maxDelaySecs=*/5);
+  const inputTD = canvas.mkEnvelopePlot('stopCopyingMe_inputTd', ctx);
+  const outputTD = canvas.mkEnvelopePlot('stopCopyingMe_outputTd', ctx);
+
+  // Add a bit of extra gain to the input mic, to make it easier to hear
+  micGain.gain.value = 1+noisy.fromDb(3);
+
+  micGain.connect(attnNode);
+  attnNode.connect(delayNode);
+  delayNode.connect(ctx.destination);
+  inputTD.connectInput(micGain);
+  outputTD.connectInput(delayNode);
+
+  const updateParams = () => {
+    const delay = parseFloat(m$('stopCopyingMe_delay').value);
+    const attn = parseFloat(m$('stopCopyingMe_attn').value);
+    const attnLin = 1 / noisy.fromDb(attn);
+    m$('stopCopyingMe_attnValue').textContent = `(${attn}dB; ${attnLin.toFixed(2)}lin)`;
+    m$('stopCopyingMe_delayValue').textContent = `${delay}ms`;
+    attnNode.gain.setValueAtTime(attnLin, ctx.currentTime);
+    delayNode.delayTime.setValueAtTime(delay / 1000, ctx.currentTime);
+  };
+
+  m$('stopCopyingMe_delay').addEventListener('input', updateParams);
+  m$('stopCopyingMe_attn').addEventListener('input', updateParams);
+  updateParams();
+
+  return {
+    start: async () => {
+      mic = ctx.createMediaStreamSource(await noisy.getUserMic());
+      mic.connect(micGain);
+      updateParams();
+    },
+    stop: async () => {
+      mic.disconnect();
+      mic = null;
+    },
+    cleanup: async () => {
+      inputTD.stop();
+      outputTD.stop();
+      mic && mic.disconnect();
+      mic = null;
+      m$('stopCopyingMe_delay').removeEventListener('input', updateParams);
+      m$('stopCopyingMe_attn').removeEventListener('input', updateParams);
     },
   };
 }

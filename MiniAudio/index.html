@@ -54,39 +54,80 @@
   <h2 class="blink">DON'T USE HEADPHONES</h2>
   <h3 class="rainbow">PLEASE, DON'T USE HEADPHONES</h3>
   <p class="main-content-verticalcenter">Some demos can have very loud, annoying or even painful audio. Don't use headphones.
-    Using headphones may be detrimental to your hearing health.</p>
+    Using headphones with loud audio is bad for your hearing health.</p>
 </div>
 
 <div class="step slide" id="soundTransmission">
   <h1>How sound travels</h1>
   <details>
     <summary>Notes</summary>
-    <p>Sound is air pushing and pulling very quickly, by tiny tiny amount. Thousands of times a second. It travels through air the same way ripples travel in a pond when we throw a stone.</p>
-    <p>You can feel how it vibrates through air (with your ears) but you can also feel it in other things: put your hand on your throat while you speak, and hum different notes. Also: put your hand on a speaker, and hear different sounds.</p>
-    <p><strong>Experiment 1:</strong> Feel different notes in your throat, then feel how different pitches make a speaker vibrate. Focus on high vs low pitch.</p>
+    <ul>
+      <li>Sound travels through air. You can feel air pushing or pulling things (like the wind!)</li>
+      <li>It travels through air the same way waves travel in a pond when we throw a stone.</li>
+      <li>It travels even if air doesn't "move": you can test this by doing a wave (like in a stadium). The wave travels through a group, but people don't move.</li>
+      <li>When this wave of air "pushes and pulls" very quickly in our ear, a tiny tiny amount, and thousands of times a second, we hear sounds.</li>
+      <li>Try it out: You can feel this as a vibration on your throat while you speak, our while you hum different notes</li>
+      <li>Also: put your hand on a speaker, and hear (feel!) different sounds. Does the pitch make a difference on how the vibration feels?</li>
   </details>
+  <canvas id="soundTransmission_canvas"></canvas>
 </div>
 
 <div class="step slide" id="soundSamples">
   <h1>How computers hear</h1>
   <details>
     <summary>Notes</summary>
-    <p>For us, sound is what our ears detect from air "wiggling" very fast. For a computer: sound is when a microphone or a speaker vibrates. When something vibrates, it wiggles a tiny bit, moving up and down.</p>
-    <p>A computer's (or a phone's) microphone will measure how much movement that vibration creates, and it will store a number. A speaker does the opposite: it reads the number, and will "move" to a position determined by this number.</p>
-    <p>You can't measure this with a ruler! The movement is so tiny that you can't see it with your eyes. Computers are super sensitive, and they don't need a big movement. We can "see" the measurements a computer stores by using a program.</p>
-    <p><strong>Experiment 2:</strong> Record a few sounds with Audacity. See how speaking louder changes amplitude. Try it with different sounds, too. Zooming in we can see the individual numbers that make up sound for a computer.</p>
+    <li>For people: sound is what our ears detect from air "wiggling" very fast.</li>
+    <li>For a computer: sound is when a microphone or a speaker vibrates. When something vibrates, it wiggles a tiny bit, moving up and down.</li>
+    <li>A computer's (or phone's) microphone will measure how much movement that vibration creates, and it will store a number.</li>
+    <li>You can't measure this with a ruler! The movement is so tiny that you can't see it with your eyes.</li>
+    <li>But we can cheat and "see" the measurements a computer stores by using a program.</li>
+    <li>The animation below is a representation of a microphone. If the "wave" is taller, it stores bigger numbers. How do you think the height of the wave affects the sound?</li>
   </details>
+  <canvas id="soundSamples_canvas"></canvas>
+  <div id="soundSamples_micOutput"></div>
 </div>
+
+<div class="step slide" id="speakers">
+  <h1>How computers play sound</h1>
+  <details>
+    <summary>Notes</summary>
+    <li>A speaker does the opposite of a mic: it reads a number, and will move as far as the number says.</li>
+    <li>The animation below is a representation of a speaker. How does a taller wave sound? What does the amplitude control?</li>
+    <li>How will the wave sound if it wiggles more rapidly? What does the frequency control?</li>
+  </details>
+  <label>Frequency <input type="range" id="speakers_frequency" min="50" max="1000" value="440"></label>
+  <label>Amplitude <input type="range" id="speakers_amplitude" min="0" max="1" step="0.01" value="0.1"></label>
+  <label><input type="checkbox" id="speakers_sound"> Enable sound</label>
+  <canvas id="speakers_canvas"></canvas>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="step slide" id="basicTone">
   <h1>Sound is just numbers</h1>
   <details>
     <summary>Notes</summary>
-    <p>A computer will "remember" a list of numbers that make up sound. This can be a list of numbers that makes music, or a list of numbers that records how you speak. It's all just numbers. A very very very long list of numbers: a computer will remember 48000 numbers for every second of audio it records!</p>
-    <p>Because it is all numbers, a computer can change how things sound. For example, we can make things sound louder by multiplying every number in this list by 2. If you are a computer, it's important to know your times tables.</p>
-    <p>We can do more than just see the volume: we know that the higher the number is, the louder it sounds. We can also hear what happens when the numbers "wiggle" faster or slower.</p>
-    <p>How quickly air wiggles determines the pitch, but this is very hard to see directly when we speak, because our pitch changes very quickly. We can get a computer to play a simpler sound, that will change the pitch only when we tell it to. This way, we can see how the speed of wiggling affects the sound.</p>
-    <p><strong>Experiment 3:</strong> Use frequency to determine pitch using a test tone.</p>
+    <li>A computer will "remember" a list of numbers that make up sound. This can be a list of numbers that makes music, or a list of numbers that records how you speak. It's all just numbers. A very very very long list of numbers: a computer will remember 48000 numbers for every second of audio it records!</li>
+    <li>Because it is all numbers, a computer can change how things sound. For example, we can make things sound louder by multiplying every number in this list by 2. If you are a computer, it's important to know your times tables.</li>
+    <li>We can do more than just see the volume: we know that the higher the number is, the louder it sounds. We can also hear what happens when the numbers "wiggle" faster or slower.</li>
+    <li>How quickly air wiggles determines the pitch, but this is very hard to see directly when we speak, because our pitch changes very quickly. We can get a computer to play a simpler sound, that will change the pitch only when we tell it to. This way, we can see how the speed of wiggling affects the sound.</li>
+    <li><strong>Experiment:</strong> Record a few real sounds with Audacity. See how speaking louder changes amplitude. Try it with different sounds, too. Zooming in we can see the individual numbers that make up sound for a computer.</li>
   </details>
   <button id="basicTone_demoToggle">Start</button>
   <label>Frequency <input type="range" id="basicTone_frequency" min="50" max="10000" value="440"></label>
@@ -164,6 +205,24 @@
   </label>
   <canvas id="humanVoice_fft"></canvas>
 </div>
+
+<div class="step slide" id="testTone">
+  <h1>Test tone generator</h1>
+  <button id="testTone_demoToggle">Start</button>
+  <label>Frequency <span id="testTone_freqLabel"></span> <input type="range" id="testTone_frequency" min="20" max="20000" value="440"></label>
+  <label>Amplitude <span id="testTone_ampLabel"></span> <input type="range" id="testTone_amplitude" min="0" max="0.5" step="0.01" value="0.1"></label>
+</div>
+
+<div class="step slide" id="stopCopyingMe">
+  <button id="stopCopyingMe_demoToggle">Start</button>
+  <label>Delay <span id="stopCopyingMe_delayValue"></span>
+    <input type="range" id="stopCopyingMe_delay" min="0" max="1000" value="0"></label>
+  <label>Attenuation <span id="stopCopyingMe_attnValue"></span>
+    <input type="range" id="stopCopyingMe_attn" min="0" max="40" step="3" value="0"></label>
+  <canvas id="stopCopyingMe_inputTd"></canvas>
+  <canvas id="stopCopyingMe_outputTd"></canvas>
+</div>
+
 
 </div>
 

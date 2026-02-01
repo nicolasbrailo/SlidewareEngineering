@@ -13,7 +13,7 @@ export { floatToWavDownload } from "./noisyFloatToWavDownload.js";
  *
  * @param {string} elementId - ID of the HTML range input element
  * @param {number} [logMin=50] - Minimum value on log scale (must be > 0)
- * @param {number} [logMax=10000] - Maximum value on log scale
+ * @param {number} [logMax] - Maximum value on log scale (defaults to element's max attribute, or 10000)
  * @returns {Object} Object with linToLog and logToLin conversion functions
  *
  * @example
@@ -25,8 +25,9 @@ export { floatToWavDownload } from "./noisyFloatToWavDownload.js";
  * // Frequency to linear slider position
  * const pos = freqConv.logToLin(1000);  // ~0.565
  */
-export function createLogLinConverter(elementId, logMin = 50, logMax = 10000) {
+export function createLogLinConverter(elementId, logMin = 50, logMax) {
   const element = document.getElementById(elementId);
+  logMax = logMax ?? (parseFloat(element?.max) || 10000);
   const logMinLn = Math.log(logMin);
   const logMaxLn = Math.log(logMax);
   const logRange = logMaxLn - logMinLn;
