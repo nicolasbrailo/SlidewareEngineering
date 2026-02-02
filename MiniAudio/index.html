@@ -43,18 +43,13 @@
     <p><a href="https://nicolasbrailo.github.io/">https://nicolasbrailo.github.io/</a></p>
     <p class="fineprint">(PSA: Careful when scanning untrusted QR codes!)</p>
   </div>
-<!--details>
-    <summary>Notes</summary>
-    I work with sounds, and computers and phones. Computers have no ears, but they can listen. They have no mouth, but they can "speak" and play music. Have you ever wondered how?
-    </details-->
 </div>
 
 <div class="step slide" id="warning" data-rel-y="3840">
   <h1>DON'T USE HEADPHONES</h1>
   <h2 class="blink">DON'T USE HEADPHONES</h2>
   <h3 class="rainbow">PLEASE, DON'T USE HEADPHONES</h3>
-  <p class="main-content-verticalcenter">Some demos can have very loud, annoying or even painful audio. Don't use headphones.
-    Using headphones with loud audio is bad for your hearing health.</p>
+  <p class="main-content-verticalcenter">Some demos can have very loud, annoying or even painful audio. Don't use headphones. Some demos may require the use of headphones: please check with a grown up first! Using headphones with loud audio is bad for your hearing health.</p>
 </div>
 
 <div class="step slide" id="soundTransmission">
@@ -68,6 +63,7 @@
       <li>When this wave of air "pushes and pulls" very quickly in our ear, a tiny tiny amount, and thousands of times a second, we hear sounds.</li>
       <li>Try it out: You can feel this as a vibration on your throat while you speak, our while you hum different notes</li>
       <li>Also: put your hand on a speaker, and hear (feel!) different sounds. Does the pitch make a difference on how the vibration feels?</li>
+    </ul>
   </details>
   <canvas id="soundTransmission_canvas"></canvas>
 </div>
@@ -76,12 +72,14 @@
   <h1>How computers hear</h1>
   <details>
     <summary>Notes</summary>
-    <li>For people: sound is what our ears detect from air "wiggling" very fast.</li>
-    <li>For a computer: sound is when a microphone or a speaker vibrates. When something vibrates, it wiggles a tiny bit, moving up and down.</li>
-    <li>A computer's (or phone's) microphone will measure how much movement that vibration creates, and it will store a number.</li>
-    <li>You can't measure this with a ruler! The movement is so tiny that you can't see it with your eyes.</li>
-    <li>But we can cheat and "see" the measurements a computer stores by using a program.</li>
-    <li>The animation below is a representation of a microphone. If the "wave" is taller, it stores bigger numbers. How do you think the height of the wave affects the sound?</li>
+    <ul>
+      <li>For people: sound is what our ears detect from air "wiggling" very fast.</li>
+      <li>For a computer: sound is when a microphone or a speaker vibrates. When something vibrates, it wiggles a tiny bit, moving up and down.</li>
+      <li>A computer's (or phone's) microphone will measure how much movement that vibration creates, and it will store a number.</li>
+      <li>You can't measure this with a ruler! The movement is so tiny that you can't see it with your eyes.</li>
+      <li>But we can cheat and "see" the measurements a computer stores by using a program.</li>
+      <li>The animation below is a representation of a microphone. If the "wave" is taller, it stores bigger numbers. How do you think the height of the wave affects the sound? How does the number change if the wave starts closer to the mic?</li>
+    </ul>
   </details>
   <canvas id="soundSamples_canvas"></canvas>
   <div id="soundSamples_micOutput"></div>
@@ -91,9 +89,13 @@
   <h1>How computers play sound</h1>
   <details>
     <summary>Notes</summary>
-    <li>A speaker does the opposite of a mic: it reads a number, and will move as far as the number says.</li>
+    <ul>
+    <li>A speaker does the opposite of a mic: it reads a number, and will move as far as the number says, very fast.</li>
+    <li>A computer will "remember" a list of numbers that make up sound. This can be a list of numbers that makes music, or a list of numbers that records how you speak. It's all just numbers. A very very very long list of numbers: a computer will remember 48000 numbers for every second of audio it records!</li>
+    <li>Because it is all numbers, a computer can change how things sound. For example, we can make things sound louder by multiplying every number in this list by 2. If you are a computer, it's important to know your times tables.</li>
     <li>The animation below is a representation of a speaker. How does a taller wave sound? What does the amplitude control?</li>
     <li>How will the wave sound if it wiggles more rapidly? What does the frequency control?</li>
+    </ul>
   </details>
   <label>Frequency <input type="range" id="speakers_frequency" min="50" max="1000" value="440"></label>
   <label>Amplitude <input type="range" id="speakers_amplitude" min="0" max="1" step="0.01" value="0.1"></label>
@@ -102,47 +104,92 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="step slide" id="basicTone">
-  <h1>Sound is just numbers</h1>
+  <h1>Real sound: just numbers!</h1>
   <details>
     <summary>Notes</summary>
-    <li>A computer will "remember" a list of numbers that make up sound. This can be a list of numbers that makes music, or a list of numbers that records how you speak. It's all just numbers. A very very very long list of numbers: a computer will remember 48000 numbers for every second of audio it records!</li>
-    <li>Because it is all numbers, a computer can change how things sound. For example, we can make things sound louder by multiplying every number in this list by 2. If you are a computer, it's important to know your times tables.</li>
-    <li>We can do more than just see the volume: we know that the higher the number is, the louder it sounds. We can also hear what happens when the numbers "wiggle" faster or slower.</li>
-    <li>How quickly air wiggles determines the pitch, but this is very hard to see directly when we speak, because our pitch changes very quickly. We can get a computer to play a simpler sound, that will change the pitch only when we tell it to. This way, we can see how the speed of wiggling affects the sound.</li>
-    <li><strong>Experiment:</strong> Record a few real sounds with Audacity. See how speaking louder changes amplitude. Try it with different sounds, too. Zooming in we can see the individual numbers that make up sound for a computer.</li>
+    <ul>
+      <li>We have been playing with very simple sounds, like the one in this demo (<span class="rainbow">no headphones here!</span>). Simple sounds help us understand how things work</li>
+      <li>Real sounds are more fun, so let's use real sounds now. But before, let's review (you can use the example below to remember):<ul>
+      <li>Sound travels as very fast "wiggles" or "waves" through the air.</li>
+      <li>How does sound change when waves are taller or shorter?</li>
+      <li>How does sound change when waves wiggle faster or slower?</li>
+      <li>How do computers record sound? And how do they play sound?</li></ul></li>
+      <li>Now that we remember how sound and computers work: let's record a few real sounds with a computer. Audacity is a good program to do this, freely available in any computer.
+        <ul>
+          <li>Record a simple sound (a test tone). Zoom in very very close: see how the shape resembles a wave (like in the animations here!)</li>
+          <li>Look at a sample: it's just a number! Can you count how many there are in one second?</li>
+          <li>Now record someone playing an instrument. Does it look simple, like before? Do you see how the waves wiggle faster or slower depending on pitch?</li>
+          <li>Now record someone talking. Can you see the changes in pitch, or is it so fast that now you can't?</li>
+        </ul>
+      </li>
+    </ul>
   </details>
-  <button id="basicTone_demoToggle">Start</button>
+  <button id="basicTone_demoToggle">Start</button> <span class="rainbow">No headphones here!</span>
   <label>Frequency <input type="range" id="basicTone_frequency" min="50" max="10000" value="440"></label>
   <label>Amplitude <input type="range" id="basicTone_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
   <canvas id="basicTone_canvas"></canvas>
 </div>
 
+
+<div class="step slide" id="shapeOfSound">
+  <h1>The shape of sound</h1>
+  <details>
+    <summary>Notes</summary>
+    <ul>
+      <li>We can recognize who is talking, and we can also recognize music and melodies. How do we do that? Each sound has a shape.</li>
+      <li>We can't just look at at samples. There are too many! There is a trick that let's us see the shape of sounds in a simpler way.</li>
+      <li>Open the "spectrogram" (this is a fancy way of saying "drawing of how pitch changes with time"). Make just one sound (one phoneme, like "AH") into the microphone.</li>
+      <li>Your voice is made up of many different pitches, in a complex pattern that changes with time.</li>
+      <li>See how vowels like "O" or "A" have a lot of low pitch, and consonants like "S" or "T" are mostly high pitch. Also try musical instruments, and clapping. Can you see the different notes?</li>
+    </ul>
+  </details>
+
+  <p>Use this demo to test different sounds (<span class="rainbow">no headphones here!</span>) or <a href="/fft.html" target="blank">open the frequency graph in a new page</a> to see it better</p>
+
+  <label>Source
+    <select id="shapeOfSound_src">
+      <option value="mic">Your mic</option>
+      <option value="sine">Sine</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="square">Square</option>
+    </select>
+  </label>
+  <canvas id="shapeOfSound_fft"></canvas>
+</div>
+
+<div class="step slide" id="experiments">
+  <h1>Science experiment time!</h1>
+  What follows is a list of experiments you can try with sound and computers. Some require microphones, speakers, or both. Pick one depending on the equipment you have.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="step slide" id="highPitch">
   <h1>Your hearing range</h1>
   <details>
     <summary>Notes</summary>
-    <p>Our hearing is very sensitive and we can hear very low pitches, and very high pitches, but every person hears a little bit differently. This also depends on how old you are, and how much you've cared for your hearing health.</p>
-    <p><strong>Experiment 4:</strong> Check hearing range, verify test speaker can reach 15K+. If test speaker isn't too broken, children should be able to hear much higher pitches than me.</p>
-    <p>Your ear is full of little hairs that "dance" with sound. Like this one: <a href="https://www.youtube.com/watch?v=pij8a8aNpWQ" target="_blank">youtube.com/watch?v=pij8a8aNpWQ</a></p>
-    <p>As you get older, or if you listen to very loud sounds very often, some of those hairs stop dancing. Make sure you take care of your hearing health!</p>
+    <ul>
+      <li>Our hearing is very sensitive and we can hear very low pitches, and very high pitches, but every person hears a little bit differently. This also depends on how old you are, and how much you've cared for your hearing health.</li>
+      <li><strong>Experiment 4:</strong> Check hearing range, verify test speaker can reach 15K+. If test speaker isn't too broken, children should be able to hear much higher pitches than me.</li>
+      <li>Your ear is full of little hairs that "dance" with sound. Like this one: <a href="https://www.youtube.com/watch?v=pij8a8aNpWQ" target="_blank">youtube.com/watch?v=pij8a8aNpWQ</a></li>
+      <li>As you get older, or if you listen to very loud sounds very often, some of those hairs stop dancing. Make sure you take care of your hearing health!</li>
+    </ul>
   </details>
   <button id="highPitch_demoToggle">Start</button>
   <label>Frequency <input type="range" id="highPitch_frequency" min="50" max="10000" value="440"></label>
@@ -154,10 +201,12 @@
   <h1>Colour</h1>
   <details>
     <summary>Notes</summary>
-    <p>Different people will hear different ranges of pitches. Animals too: cats and dogs can hear pitches 4 times higher than humans. Dolphins and bats up to 10 times more.</p>
-    <p>A similar thing happens with colour: you can see colours in the rainbow, but bees can see colours that we can't see. Their eyes work differently.</p>
-    <p>In fact, sound pitch and light colours are very similar: they are both how fast something "wiggles" (sound needs air to travel through, but light doesn't need anything!). For computers, both colours and sounds are just numbers, so we can use a program to convert "sound-pitch" to "light-pitch" (colour!)</p>
-    <p><strong>Experiment 5:</strong> Adjust the tone to see how it affects colours: the higher the frequency, the higher the pitch, and the closer it should get to the violet end of the rainbow.</p>
+    <ul>
+      <li>Different people will hear different ranges of pitches. Animals too: cats and dogs can hear pitches 4 times higher than humans. Dolphins and bats up to 10 times more.</li>
+      <li>A similar thing happens with colour: you can see colours in the rainbow, but bees can see colours that we can't see. Their eyes work differently.</li>
+      <li>In fact, sound pitch and light colours are very similar: they are both how fast something "wiggles" (sound needs air to travel through, but light doesn't need anything!). For computers, both colours and sounds are just numbers, so we can use a program to convert "sound-pitch" to "light-pitch" (colour!)</li>
+      <li><strong>Experiment 5:</strong> Adjust the tone to see how it affects colours: the higher the frequency, the higher the pitch, and the closer it should get to the violet end of the rainbow.</li>
+    </ul>
   </details>
   <button id="toneColour_demoToggle">Start</button>
   <label>Frequency <input type="range" id="toneColour_frequency" min="50" max="10000" value="440"></label>
@@ -170,44 +219,20 @@
   <h1>Speed of sound</h1>
   <details>
     <summary>Notes</summary>
-    <p>Because to computers everything is just numbers, we can convert one type of numbers to another: we can convert a list of sound-numbers to electricity-numbers or to light-numbers, and send those to another computer, so that the other computer can make sound.</p>
-    <p>Why do we do this? Sounds don't travel very far, and they don't travel very fast.</p>
-    <p><strong>Experiment 6:</strong> Measuring the speed of sound; combine two recording channels to show that distance is proportional to flight-of-time delay.</p>
-    <p>Sound travels about 350 meters per second. Sound would take a full second to travel between the school and the playground in Highbury Fields. It would take about 4 minutes to travel between London and Brighton.</p>
-    <p>That seems fast, but imagine speaking to someone who will take 8 minutes to answer? And imagine how much you'll have to shout!</p>
-    <p>Light is a lot faster; it takes about 1 second to travel from the moon to us, so phones use light (or electricity, which is just as fast) to send each other lists of numbers.</p>
+    <ul>
+      <li>Because to computers everything is just numbers, we can convert one type of numbers to another: we can convert a list of sound-numbers to electricity-numbers or to light-numbers, and send those to another computer, so that the other computer can make sound.</li>
+      <li>Why do we do this? Sounds don't travel very far, and they don't travel very fast.</li>
+      <li><strong>Experiment 6:</strong> Measuring the speed of sound; combine two recording channels to show that distance is proportional to flight-of-time delay.</li>
+      <li>Sound travels about 350 meters per second. Sound would take a full second to travel between the school and the playground in Highbury Fields. It would take about 4 minutes to travel between London and Brighton.</li>
+      <li>That seems fast, but imagine speaking to someone who will take 8 minutes to answer? And imagine how much you'll have to shout!</li>
+      <li>Light is a lot faster; it takes about 1 second to travel from the moon to us, so phones use light (or electricity, which is just as fast) to send each other lists of numbers.</li>
+    </ul>
   </details>
-</div>
-
-<div class="step slide" id="fft">
-  <h1>The shape of sound</h1>
-  <details>
-    <summary>Notes</summary>
-    <p>When a computer receives audio and plays that for us, we can recognize who is talking, and we can also recognize music and melodies. How do we do that? Each sound has a shape.</p>
-    <p>Open the "spectrogram" (this is a fancy way of saying "drawing of how frequency changes with time"). Make just one sound, one phoneme, into the microphone, and see how your voice is made up not of one single pitch, but many different pitches, in a complex pattern that changes with time.</p>
-    <p>See how vowels like "O" or "A" have a lot of low pitch, and consonants like "S" or "T" are mostly high pitch. Also try musical instruments. Can you see the different notes?</p>
-    <p><strong>Experiment 7:</strong> Open a spectrogram, find a link between the graph and pitch/loudness.</p>
-    <p><strong>Experiment 8:</strong> Same pitch but different harmonics determine timbre.</p>
-  </details>
-  <a href="/fft.html" target="blank">Open frequency graph</a>
-</div>
-
-<div class="step slide" id="humanVoice">
-  <h1>Sound sources</h1>
-  <label>Source
-    <select id="humanVoice_src">
-      <option value="mic">Your mic</option>
-      <option value="sine">Sine</option>
-      <option value="triangle">Triangle</option>
-      <option value="sawtooth">Sawtooth</option>
-      <option value="square">Square</option>
-    </select>
-  </label>
-  <canvas id="humanVoice_fft"></canvas>
 </div>
 
 <div class="step slide" id="testTone">
   <h1>Test tone generator</h1>
+  <h2 class="blink">DON'T USE HEADPHONES HERE</h2>
   <button id="testTone_demoToggle">Start</button>
   <label>Frequency <span id="testTone_freqLabel"></span> <input type="range" id="testTone_frequency" min="20" max="20000" value="440"></label>
   <label>Amplitude <span id="testTone_ampLabel"></span> <input type="range" id="testTone_amplitude" min="0" max="0.5" step="0.01" value="0.1"></label>

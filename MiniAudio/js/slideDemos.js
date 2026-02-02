@@ -173,6 +173,53 @@ export async function testTone(ctx) {
   });
 }
 
+export async function shapeOfSound(ctx) {
+  const plot = canvas.mkSpectrogramPlot('shapeOfSound_fft', ctx, {
+    fftSize: 8192,
+    timeSliceWidthPx: 1,
+    minFreq: 100,
+    maxFreq: 6000,
+    scale: 'mel-compressed',
+  });
+  const stream = await noisy.getUserMic();
+  let mic = ctx.createMediaStreamSource(stream);
+  let osc = ctx.createOscillator();
+  let gain = ctx.createGain();
+
+  plot.connectInput(gain);
+
+  gain.gain.value = 0.8;
+  osc.start();
+
+  const updateSrc = () => {
+    // Disconnect both inputs. One of these will throw, the other should succeed.
+    try { mic.disconnect(gain); } catch(e) {}
+    try { osc.disconnect(gain); } catch(e) {}
+    try { gain.disconnect(ctx.destination); } catch(e) {}
+    if (document.getElementById('shapeOfSound_src').value == 'mic') {
+      mic.connect(gain);
+    } else {
+      osc.type = document.getElementById('shapeOfSound_src').value;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+    }
+  };
+
+  updateSrc();
+
+  document.getElementById('shapeOfSound_src').addEventListener('change', updateSrc);
+  return {
+    cleanup: () => {
+      document.getElementById('shapeOfSound_src').removeEventListener('change', updateSrc);
+      plot.stop();
+      stream.getTracks().forEach(track => track.stop());
+      mic.disconnect();
+      mic = null;
+    },
+  };
+}
+
+
 export async function toneColour(ctx) {
   const frequencyRange = document.getElementById('toneColour_frequency');
   const amplitudeRange = document.getElementById('toneColour_amplitude');
@@ -223,50 +270,6 @@ export async function toneColour(ctx) {
       osc.destroy();
       frequencyRange.removeEventListener('input', onFrequencyChange);
       amplitudeRange.removeEventListener('input', onAmplitudeChange);
-    },
-  };
-}
-
-export async function humanVoice(ctx) {
-  const plot = canvas.mkSpectrogramPlot('humanVoice_fft', ctx, {
-    fftSize: 8192,
-    timeSliceWidthPx: 1,
-    minFreq: 100,
-    maxFreq: 6000,
-    scale: 'mel-compressed',
-  });
-  const stream = await noisy.getUserMic();
-  let mic = ctx.createMediaStreamSource(stream);
-  let osc = ctx.createOscillator();
-  let gain = ctx.createGain();
-
-  plot.connectInput(gain);
-
-  gain.gain.value = 0.8;
-  osc.start();
-
-  const updateSrc = () => {
-    // Disconnect both inputs. One of these will throw, the other should succeed.
-    try { mic.disconnect(gain); } catch(e) {}
-    try { osc.disconnect(gain); } catch(e) {}
-    if (document.getElementById('humanVoice_src').value == 'mic') {
-      mic.connect(gain);
-    } else {
-      osc.type = document.getElementById('humanVoice_src').value;
-      osc.connect(gain);
-    }
-  };
-
-  updateSrc();
-
-  document.getElementById('humanVoice_src').addEventListener('change', updateSrc);
-  return {
-    cleanup: () => {
-      document.getElementById('humanVoice_src').removeEventListener('change', updateSrc);
-      plot.stop();
-      stream.getTracks().forEach(track => track.stop());
-      mic.disconnect();
-      mic = null;
     },
   };
 }
