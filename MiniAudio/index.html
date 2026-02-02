@@ -61,7 +61,7 @@
       <li>It travels through air the same way waves travel in a pond when we throw a stone.</li>
       <li>It travels even if air doesn't "move": you can test this by doing a wave (like in a stadium). The wave travels through a group, but people don't move.</li>
       <li>When this wave of air "pushes and pulls" very quickly in our ear, a tiny tiny amount, and thousands of times a second, we hear sounds.</li>
-      <li>Try it out: You can feel this as a vibration on your throat while you speak, our while you hum different notes</li>
+      <li>Try it out: You can feel this as a vibration on your throat while you speak, or while you hum different notes</li>
       <li>Also: put your hand on a speaker, and hear (feel!) different sounds. Does the pitch make a difference on how the vibration feels?</li>
     </ul>
   </details>
@@ -84,6 +84,7 @@
   <canvas id="soundSamples_canvas"></canvas>
   <div id="soundSamples_micOutput"></div>
 </div>
+
 
 <div class="step slide" id="speakers">
   <h1>How computers play sound</h1>
@@ -138,8 +139,8 @@
     <summary>Notes</summary>
     <ul>
       <li>We can recognize who is talking, and we can also recognize music and melodies. How do we do that? Each sound has a shape.</li>
-      <li>We can't just look at at samples. There are too many! There is a trick that let's us see the shape of sounds in a simpler way.</li>
-      <li>Open the "spectrogram" (this is a fancy way of saying "drawing of how pitch changes with time"). Make just one sound (one phoneme, like "AH") into the microphone.</li>
+      <li>We can't just look at samples. There are too many! There is a trick that lets us see the shape of sounds in a simpler way.</li>
+      <li>Open the "spectrogram" (this is a fancy way of saying "drawing of how pitch changes with time"). Make just one sound (one phoneme: a sound like "AH") into the microphone.</li>
       <li>Your voice is made up of many different pitches, in a complex pattern that changes with time.</li>
       <li>See how vowels like "O" or "A" have a lot of low pitch, and consonants like "S" or "T" are mostly high pitch. Also try musical instruments, and clapping. Can you see the different notes?</li>
     </ul>
@@ -165,80 +166,44 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="step slide" id="highPitch">
-  <h1>Your hearing range</h1>
-  <details>
-    <summary>Notes</summary>
-    <ul>
-      <li>Our hearing is very sensitive and we can hear very low pitches, and very high pitches, but every person hears a little bit differently. This also depends on how old you are, and how much you've cared for your hearing health.</li>
-      <li><strong>Experiment 4:</strong> Check hearing range, verify test speaker can reach 15K+. If test speaker isn't too broken, children should be able to hear much higher pitches than me.</li>
-      <li>Your ear is full of little hairs that "dance" with sound. Like this one: <a href="https://www.youtube.com/watch?v=pij8a8aNpWQ" target="_blank">youtube.com/watch?v=pij8a8aNpWQ</a></li>
-      <li>As you get older, or if you listen to very loud sounds very often, some of those hairs stop dancing. Make sure you take care of your hearing health!</li>
-    </ul>
-  </details>
-  <button id="highPitch_demoToggle">Start</button>
-  <label>Frequency <input type="range" id="highPitch_frequency" min="50" max="10000" value="440"></label>
-  <label>Amplitude <input type="range" id="highPitch_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
-  <canvas id="highPitch_canvas"></canvas>
-</div>
-
-<div class="step slide" id="toneColour">
-  <h1>Colour</h1>
-  <details>
-    <summary>Notes</summary>
-    <ul>
-      <li>Different people will hear different ranges of pitches. Animals too: cats and dogs can hear pitches 4 times higher than humans. Dolphins and bats up to 10 times more.</li>
-      <li>A similar thing happens with colour: you can see colours in the rainbow, but bees can see colours that we can't see. Their eyes work differently.</li>
-      <li>In fact, sound pitch and light colours are very similar: they are both how fast something "wiggles" (sound needs air to travel through, but light doesn't need anything!). For computers, both colours and sounds are just numbers, so we can use a program to convert "sound-pitch" to "light-pitch" (colour!)</li>
-      <li><strong>Experiment 5:</strong> Adjust the tone to see how it affects colours: the higher the frequency, the higher the pitch, and the closer it should get to the violet end of the rainbow.</li>
-    </ul>
-  </details>
-  <button id="toneColour_demoToggle">Start</button>
-  <label>Frequency <input type="range" id="toneColour_frequency" min="50" max="10000" value="440"></label>
-  <label>Amplitude <input type="range" id="toneColour_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
-  <div id="toneColour_colorDisplay" style="width: 95vw" class="color-display"></div>
-  <div id="toneColour_colorInfo"></div>
-</div>
-
 <div class="step slide" id="speedOfSound">
   <h1>Speed of sound</h1>
+  <ul>
+    <li>Sound is fast, but it still takes time to travel. Let's measure how fast!</li>
+    <li>You need two microphones and a mixing console (this is a complicated setup!).</li>
+    <li>Place them close together, start recording (with Audacity), and clap. You should see two waves starting at the same time.</li>
+    <li>Now move the microphones far apart. Clap again, very close to one mic.</li>
+    <li>You should now see two waves... but they start at different times! Measure how long it takes from one wave to the other.</li>
+  </ul>
+
   <details>
     <summary>Notes</summary>
     <ul>
-      <li>Because to computers everything is just numbers, we can convert one type of numbers to another: we can convert a list of sound-numbers to electricity-numbers or to light-numbers, and send those to another computer, so that the other computer can make sound.</li>
-      <li>Why do we do this? Sounds don't travel very far, and they don't travel very fast.</li>
-      <li><strong>Experiment 6:</strong> Measuring the speed of sound; combine two recording channels to show that distance is proportional to flight-of-time delay.</li>
-      <li>Sound travels about 350 meters per second. Sound would take a full second to travel between the school and the playground in Highbury Fields. It would take about 4 minutes to travel between London and Brighton.</li>
-      <li>That seems fast, but imagine speaking to someone who will take 8 minutes to answer? And imagine how much you'll have to shout!</li>
-      <li>Light is a lot faster; it takes about 1 second to travel from the moon to us, so phones use light (or electricity, which is just as fast) to send each other lists of numbers.</li>
+      <li>Sound travels about 350 meters per second. It would take a full second to cross a football field, and 4 minutes to go from London to Brighton.</li>
+      <li>That seems fast, but imagine waiting 8 minutes for someone to answer? And imagine how loud you'd have to shout!</li>
     </ul>
   </details>
+
 </div>
 
-<div class="step slide" id="testTone">
-  <h1>Test tone generator</h1>
-  <h2 class="blink">DON'T USE HEADPHONES HERE</h2>
-  <button id="testTone_demoToggle">Start</button>
-  <label>Frequency <span id="testTone_freqLabel"></span> <input type="range" id="testTone_frequency" min="20" max="20000" value="440"></label>
-  <label>Amplitude <span id="testTone_ampLabel"></span> <input type="range" id="testTone_amplitude" min="0" max="0.5" step="0.01" value="0.1"></label>
-</div>
 
 <div class="step slide" id="stopCopyingMe">
+  <h1>Forget how to read</h1>
+
+  <ul>
+    <li>You will need a mic and headphones (a phone works; make sure to use headphones. <span class="rainbow">Careful with the volume!</span>)</li>
+    <li>Grab a book and click start. How much of a page can you read?</li>
+  </ul>
+
+  <details>
+    <summary>Notes</summary>
+    <ul>
+      <li>You always hear yourself when you talk. This helps you control how loud you are. (Side experiment: block your ears and try reading a book. Ask someone else to tell you if you are shouting)</li>
+      <li>Normally you hear yourself right away, with no delay.</li>
+      <li>This demo adds a small delay (an echo). When you hear yourself with a delay, your brain gets confused and you forget how to read!</li>
+    </ul>
+  </details>
+
   <button id="stopCopyingMe_demoToggle">Start</button>
   <label>Delay <span id="stopCopyingMe_delayValue"></span>
     <input type="range" id="stopCopyingMe_delay" min="0" max="1000" value="0"></label>
@@ -246,6 +211,34 @@
     <input type="range" id="stopCopyingMe_attn" min="0" max="40" step="3" value="0"></label>
   <canvas id="stopCopyingMe_inputTd"></canvas>
   <canvas id="stopCopyingMe_outputTd"></canvas>
+</div>
+
+
+<div class="step slide" id="highPitch">
+  <h1>Your hearing range <span class="rainbow">NO HEADPHONES!</span></h1>
+  <details>
+    <summary>Notes</summary>
+    <ul>
+      <li>We can hear very low and very high pitches. But everyone hears a little differently. How well you hear also depends on your age, and how well you've taken care of your ears.</li>
+      <li>Your ear is full of little hairs that "dance" with sound. <a href="https://www.youtube.com/watch?v=pij8a8aNpWQ" target="_blank">Like this one</a></li>
+      <li>As you get older, or if you listen to very loud sounds very often, some of those hairs stop dancing. Make sure you take care of your hearing health!</li>
+      <li>Play with this slider (<span class="rainbow">NO HEADPHONES!</span>) and see what's the highest pitch you can hear. Compare with an adult: who can hear higher?</li>
+    </ul>
+  </details>
+  <button id="highPitch_demoToggle">Start</button>
+  <label>Pitch <input type="range" id="highPitch_frequency" min="50" max="20000" value="440"></label>
+  <label>Volume <input type="range" id="highPitch_amplitude" min="0" max="0.25" step="0.01" value="0.1"></label>
+  <canvas id="highPitch_canvas"></canvas>
+</div>
+
+
+<div class="step slide" id="testTone">
+  <h1>Test tone generator</h1>
+  <h2 class="blink">DON'T USE HEADPHONES HERE</h2>
+  <p>This isn't really an experiment, just a way to generate simple test tones that can be used for other experiments</p>
+  <button id="testTone_demoToggle">Start</button>
+  <label>Frequency <span id="testTone_freqLabel"></span> <input type="range" id="testTone_frequency" min="20" max="20000" value="440"></label>
+  <label>Amplitude <span id="testTone_ampLabel"></span> <input type="range" id="testTone_amplitude" min="0" max="0.5" step="0.01" value="0.1"></label>
 </div>
 
 
