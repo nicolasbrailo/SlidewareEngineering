@@ -578,6 +578,38 @@ select {
   line-height: 1.4;
 }
 
+/* Desktop side navigation: when there's enough margin around the slide, show prev/next on sides. This is quite useful for touchscreens. */
+@media not all and (orientation: landscape) and (max-height: 500px) {
+  body.has-side-nav-margins #impress-toolbar {
+    transform: none;
+  }
+
+  body.has-side-nav-margins #impress-navigation-ui-prev,
+  body.has-side-nav-margins #impress-navigation-ui-next {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    padding: 0.8rem 1.2rem;
+    opacity: 0.5;
+    z-index: 1001;
+    transition: opacity 0.2s;
+  }
+
+  body.has-side-nav-margins #impress-navigation-ui-prev:hover,
+  body.has-side-nav-margins #impress-navigation-ui-next:hover {
+    opacity: 0.9;
+  }
+
+  body.has-side-nav-margins #impress-navigation-ui-prev {
+    left: 10px;
+  }
+
+  body.has-side-nav-margins #impress-navigation-ui-next {
+    right: 10px;
+  }
+}
+
 /* Mobile landscape: hack the style a little bit so that it's usable in mobile:
   - position prev/next buttons on left/right edges, so the user doesn't have to fiddle with swipes to move slides
   - Make buttons/ranges bigger and easier to interact with
