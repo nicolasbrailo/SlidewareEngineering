@@ -27,7 +27,7 @@ function getImpressMargins() {
 
 function checkSideNavMargins() {
   const margins = getImpressMargins();
-  const minMarginNeeded = 60; // button width + padding
+  const minMarginNeeded = 40; // button width + padding
   const showButtons = margins.horizontal >= minMarginNeeded;
   document.body.classList.toggle('has-side-nav-margins', showButtons);
 }

@@ -534,8 +534,8 @@ export async function soundTransmission(ctx) {
   canvasEl.addEventListener('mousemove', onPointerMove);
   canvasEl.addEventListener('mouseup', onPointerUp);
   canvasEl.addEventListener('mouseleave', onPointerUp);
-  canvasEl.addEventListener('touchstart', onPointerDown);
-  canvasEl.addEventListener('touchmove', onPointerMove);
+  canvasEl.addEventListener('touchstart', onPointerDown, { passive: false });
+  canvasEl.addEventListener('touchmove', onPointerMove, { passive: false });
   canvasEl.addEventListener('touchend', onPointerUp);
 
   // Start animation
